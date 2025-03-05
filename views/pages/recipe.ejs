@@ -1,0 +1,33 @@
+<%- include('../partials/head', { title: recipe.name }) %>
+<%- include('../partials/header') %>
+
+<main class="recipe-detail">
+  <h1><%= recipe.name %></h1>
+  
+  <div class="metadata">
+    <span class="protein-type"><strong>Protein Type:</strong> <%= recipe.protein_type %></span>
+  </div>
+
+  <section class="ingredients">
+    <h2>Ingredients</h2>
+    <ul class="ingredient-list">
+      <% ingredients.forEach(ingredient => { %>
+        <li class="ingredient-item"
+            data-origin="<%= ingredient.origin %>"
+            data-safety="<%= ingredient.safety_tips %>"
+            data-fact="<%= ingredient.fun_fact %>">
+          <%= ingredient.name %>
+        </li>
+      <% }); %>
+    </ul>
+    <div id="ingredient-tooltip" class="tooltip"></div>
+  </section>
+
+  <section class="instructions">
+    <h2>Instructions</h2>
+    <div class="instructions-content"><%- recipe.instructions.replace(/\n/g, '<br>') %></div>
+  </section>
+</main>
+
+<%- include('../partials/footer') %>
+<script src="/js/script.js"></script>

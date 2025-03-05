@@ -1,0 +1,63 @@
+<%- include('../partials/head', { title: 'Add New Recipe' }) %>
+<%- include('../partials/header') %>
+
+<main class="add-recipe">
+  <h1>Add New Recipe</h1>
+  
+  <form action="/recipes/add" method="POST" id="recipe-form">
+    <div class="form-group">
+      <label for="name">Recipe Name:</label>
+      <input type="text" id="name" name="name" required class="form-control">
+    </div>
+
+    <div class="form-group">
+      <label for="protein_type">Protein Type:</label>
+      <select id="protein_type" name="protein_type" required class="form-control">
+        <option value="">Select Protein</option>
+        <option value="Chicken">Chicken</option>
+        <option value="Beef">Beef</option>
+        <option value="Grains">Grains</option>
+        <option value="Fish">Fish</option>
+        <option value="Beans">Beans</option>
+        <option value="Eggs">Eggs</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="instructions">Instructions:</label>
+      <textarea id="instructions" name="instructions" rows="6" required class="form-control"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>Ingredients:</label>
+      <div class="ingredient-checkboxes">
+        <% allIngredients.forEach(ingredient => { %>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" 
+                   name="ingredients" 
+                   value="<%= ingredient.id %>" 
+                   id="ingredient-<%= ingredient.id %>">
+            <label class="form-check-label" for="ingredient-<%= ingredient.id %>">
+              <%= ingredient.name %>
+            </label>
+          </div>
+        <% }); %>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-submit">Add Recipe</button>
+  </form>
+</main>
+
+<%- include('../partials/footer') %>
+
+<script>
+  // Client-side validation
+  document.getElementById('recipe-form').addEventListener('submit', function(e) {
+    const ingredients = document.querySelectorAll('input[name="ingredients"]:checked');
+    if (ingredients.length === 0) {
+      e.preventDefault();
+      alert('Please select at least one ingredient');
+    }
+  });
+</script>

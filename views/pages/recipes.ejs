@@ -1,0 +1,22 @@
+<%- include('../partials/head', { title: 'All Recipes' }) %>
+<%- include('../partials/header') %>
+
+<main class="recipe-list">
+  <h1>All Recipes</h1>
+  
+  <% Object.entries(categorized).forEach(([proteinType, recipes]) => { %>
+    <section class="protein-category">
+      <h2 class="protein-header"><%= proteinType %></h2>
+      <div class="recipes-container">
+        <% recipes.forEach(recipe => { %>
+          <div class="recipe-card">
+            <h3><a href="/recipes/<%= recipe.id %>"><%= recipe.name %></a></h3>
+            <p>Ingredients: <%= recipe.ingredients %></p>
+          </div>
+        <% }) %>
+      </div>
+    </section>
+  <% }) %>
+</main>
+
+<%- include('../partials/footer') %>
