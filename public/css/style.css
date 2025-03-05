@@ -69,15 +69,19 @@ main {
 
 /* ====== HEADER & NAVIGATION ====== */
 header {
-  background-color: var(--white);
+  background-color: var(--light-bg);
   padding: var(--spacing-md) var(--spacing-lg);
   border-bottom: 1px solid var(--border-color);
   margin-bottom: var(--spacing-xl);
+  display: flex;
+  justify-content: space-evenly;
 }
 
 nav {
   display: flex;
-  justify-content: center;
+  width: 500px;
+  justify-content: space-between;
+  
   gap: var(--spacing-lg);
 }
 
@@ -422,9 +426,20 @@ footer {
     gap: var(--spacing-sm);
   }
 }
+
+.auth-buttons {
+  margin-left: 10vw;
+}
+
+.logo-title {
+  display: flex;
+  align-items: center; /* vertically centers the children */
+}
+
 /* Crazy */
 .header-container {
   display: flex;
+  width: 90vw;
   justify-content: space-between;
   align-items: center;
   max-width: 1200px;
@@ -450,7 +465,7 @@ footer {
 @media (max-width: 768px) {
   .header-container {
     flex-direction: column;
-    gap: var(--spacing-md);
+    /* gap: var(--spacing-md); */
   }
   
   .header-image {
