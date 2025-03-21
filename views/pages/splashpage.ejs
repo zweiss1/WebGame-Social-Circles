@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <!-- 
+    The title sets the text displayed on the browser's tab.
+  -->
+  <title>Social Circles</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- 
+    Container div that wraps both the left and right sections to create a two-column layout.
+  -->
+  <div class="container">
+    <!-- 
+      Left-section of the page: Contains the site header and logo.
+    -->
+    <div class="left-section">
+      <!-- 
+        Main header for the site. 
+      -->
+      <h1 class="site-header">WELCOME TO SOCIAL CIRCLES</h1>
+      <img 
+        src="path_to_logo.png" 
+        alt="Horn Studios Logo" 
+        class="site-logo" 
+      />
+    </div>
+
+    <!-- 
+      Right-section of the page: Contains the user login interface.
+    -->
+    <div class="right-section">
+      <!-- 
+        The login container holds the login form and related buttons.
+      -->
+      <div class="login-container">
+        <h2 class="login-title">Log In</h2>
+        <label for="username" class="login-label">Username</label>
+        <input 
+          type="text" 
+          id="username" 
+          class="login-input" 
+          placeholder="Enter your username" 
+        />
+
+        <!-- 
+          Label and input for the password.
+          The 'for' attribute connects the label to the input with id 'password'.
+        -->
+        <label for="password" class="login-label">Password</label>
+        <input 
+          type="password" 
+          id="password" 
+          class="login-input" 
+          placeholder="Enter your password" 
+        />
+
+        <!-- 
+          Container for action buttons related to account creation, guest access, and login submission.
+        -->
+        <div class="login-actions">
+          <button class="create-account-button">Create an account</button>
+          <button class="guest-button">Continue as guest</button>
+          <button class="login-button">Log In</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
