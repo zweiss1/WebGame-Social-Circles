@@ -1,1 +1,37 @@
 <!DOCTYPE html>
+<html>
+    <head>
+        <meta lang="en">
+        <title>Social Circles</title>
+        <!-- A favicon could go here, I suppose -->
+        <link rel="stylesheet" href="/public/css/style.css">
+    </head>
+
+    <body>
+        <header>
+            <h1>SOCIAL CIRCLES</h1>
+            <img id="profileButton" src="https://m.media-amazon.com/images/M/MV5BMzgzMzY2MmMtMWNkNy00ZjVkLWIxOWUtZDJjODNmY2IyOWFiXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" width="100" height="100">
+        </header>
+        <main id="homeMain">
+            <canvas id="gameCanvas" width="700" height="500" style="border: 5px solid black;"></canvas>
+            <div id="leaderboardHolder">
+                <h2>Leaderboard</h2>
+                <!--This will all be dynamically populated, obviously-->
+                <ol>
+                    <!-- In the object passed to this ejs page when rendering, we need an array of objects: {name, score} called leaderboardPlayers-->
+                    <% for (let i = 0; i < leaderboardPlayers.length; i++){ %>
+                        <li>
+                            <!-- Name should be left-aligned, and score should be right-aligned -->
+                            <span class="leaderboardName"><%=leaderboardPlayers[i].name%></span>
+                            <span class="leaderboardScore"><%=leaderboardPlayers[i].score%></span>
+                        </li>
+                    <%}%>
+                </ol>
+            </div>
+
+            <!-- This menu has links to "logout" and "settings." This div should be hidden by default and should appear when you click your profile picture. -->
+            <div id="playerMenu">
+            </div>
+        </main>
+    </body>
+</html>
