@@ -1,3 +1,73 @@
 html, body {
-    background-color: green;
+    /* background-color: bisque; */
+    background-color: #cfc5b0;
+    font-family: 'Roboto';
+    font-size: 22px;
+}
+
+h1 {
+    font-size: 50px;
+    margin-top: 25px;
+    margin-bottom: 50px;
+}
+
+.splashcontainer {
+    display: grid;
+    grid-template-columns: 40vw 60vw;
+    margin-left: 45px;
+}
+
+.site-header {
+    margin-left:40px;
+}
+
+.login-title {
+    font-size: 50px;
+    margin-top:20px;
+    margin-bottom:50px;
+}
+
+
+#logo {
+    border-radius: 3px;
+    width: 100%;
+}
+
+#password, #username {
+    border: none;
+    background: none;
+    outline: none;
+    border-bottom: 1px solid black;
+}
+
+.login-container {
+    margin-left: 60px;
+}
+
+.login-actions {
+    font-size:18px;
+    display: flex;
+    flex-direction: row;
+    text-align: left;
+    align-items: center;
+}
+
+.login-button {
+    margin-left: 30px;
+    height: 40px;
+    width: 180px;
+    border-radius: 9px;
+    border: none;
+    background-color: #cd9d59;
+    font-family: 'Roboto';
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.login-button:hover {
+    cursor: pointer;
+}
+
+a {
+    color: black;
 }
