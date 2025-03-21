@@ -24,10 +24,9 @@ app.use((req, res, next) => {
 
 // Routes
 const indexRouter = require('./routes/index');
-const recipesRouter = require('./routes/recipes');
 
 app.use('/', indexRouter);
-app.use('/recipes', recipesRouter);
+
 
 // Basic error handling
 app.use((err, req, res, next) => {
