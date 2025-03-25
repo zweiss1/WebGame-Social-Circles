@@ -24,8 +24,10 @@ app.use((req, res, next) => {
 
 // Routes
 const indexRouter = require('./routes/index');
+const leaderboardRouter = require('./routes/leaderboard');
 
 app.use('/', indexRouter);
+app.use('/leaderboard', leaderboardRouter);
 
 
 // Basic error handling

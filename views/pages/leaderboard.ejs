@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
+    <meta charset="UTF-8" />
+
+    <title>Social Circles</title>
+    <link rel="stylesheet" href="/css/style.css">
+    </head>
+    <body id="splashbody">
+        <center><h1 class="site-header">SOCIAL CIRCLES</h1></center>
+        <div class="leaderb-layout">
+
+            <div class="leaderb-container">
+                <ol>
+                    <h2 class="centered-title">Leaderboard</h2>
+                <%leaderboardPlayers.forEach((player) =>{%>
+                    <li>
+                        <div class="leaderb-entry">
+                            <p><%=player.name%></p>
+                            <p><%=player.score%></p>
+                        </div>
+                    </li>
+                <%})%>
+                </ol>
+            </div>
+            <div class="leaderb-container">
+                <ol>
+                    <h2 class="centered-title">Friends</h2>
+                <%leaderboardPlayers.forEach((player) =>{%>
+                    <li>
+                        <div class="leaderb-entry">
+                            <p><%=player.name%></p>
+                            <p><%=player.score%></p>
+                        </div>
+                    </li>
+                <%})%>
+                </ol>
+            </div>
+            <div class="friend-container">
+                <h2 class="centered-title">Add Friend</h2>
+                <p>Enter username to send a friend request</p>
+                <label for="username" class="login-label" style="font-weight: bold;">Username</label>
+                <br>
+                <input type="text" id="username" class="login-input" placeholder="Enter a username"/>
+                <button class="login-button">Submit</button>
+            </div>
+
+            
+        </div>
+    </body>
+</html>
