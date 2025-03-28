@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
+  <meta charset="UTF-8" />
+  <!-- 
+    The title sets the text displayed on the browser's tab.
+  -->
+  <title>Social Circles</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body id="splashbody">
+  <!-- 
+    Container div that wraps both the left and right sections to create a two-column layout.
+  -->
+  <h1 class="site-header">WELCOME TO SOCIAL CIRCLES</h1>
+  <div class="splashcontainer">
+    <!-- 
+      Left-section of the page: Contains the site header and logo.
+    -->
+    <div class="left-section">
+      <!-- 
+        Main header for the site. 
+      -->
+      <img 
+        id="logo"
+        src="/images/logo.jpg" 
+        alt="Horn Studios Logo" 
+        class="site-logo" 
+        width="500"
+      />
+    </div>
+
+    <!-- 
+      Right-section of the page: Contains the user login interface.
+    -->
+    <div class="right-section">
+      <!-- 
+        The login container holds the login form and related buttons.
+      -->
+      <div class="login-container">
+        <h2 class="login-title">Log In</h2>
+        <label for="username" class="login-label" style="font-weight: bold;">Username</label>
+        <br>
+        <input 
+          type="text" 
+          id="username" 
+          class="login-input" 
+          placeholder="Enter your username" 
+        />
+        <br>
+        <br>
+
+        <!-- 
+          Label and input for the password.
+          The 'for' attribute connects the label to the input with id 'password'.
+        -->
+        <label for="password" class="login-label" style="font-weight: bold;">Password</label>
+        <br>
+        <input 
+          type="password" 
+          id="password" 
+          class="login-input" 
+          placeholder="Enter your password" 
+        />
+        <br>  
+        <br>
+
+        <!-- 
+          Container for action buttons related to account creation, guest access, and login submission.
+        -->
+        <div class="login-actions">
+          <div style="text-align: center;">
+            <a href="/signup">Create an account</a>
+            <br>
+            <span>or</span>
+            <br>
+            <a href="/home">Continue as guest</a>
+          </div>
+          <button class="login-button">Log In</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
