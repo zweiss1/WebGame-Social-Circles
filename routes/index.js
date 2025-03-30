@@ -27,7 +27,7 @@ router.post('/login', (req, res) => {
       }
       req.session.user = result[0];
       req.session.save();
-      res.render('pages/home');
+      res.redirect('/home');
   });
 
 });
@@ -37,35 +37,29 @@ router.post('/signup', async (req, res) => {
   const { username, password } = req.body;
   const hash = await bcrypt.hash(password, 13);
   //Checks if username is taken
-  console.log(username);
-  console.log(password);
-  console.log(hash);
   let checkUser = 'SELECT * FROM user_information WHERE username=?';
   connection.query(checkUser, [username], (err, result) => {
       if (err) throw err;
       if (result.length != 0) {
           return res.status(401).send('Username is already taken');
       }
-      console.log('hello');
-
       //Adds user to database
       let sql = 'INSERT INTO user_information(username, hash_password) VALUES(?,?)';
       connection.query(sql, [username, hash], (err, result) => {
           if (err) throw err;
-          const getUser = result.insertId;
           //Querying user that was just added
-          let sql2 = 'SELECT * FROM user_information WHERE username=?';
-          connection.query(sql2, [getUser], (err, result) => {
+          connection.query(checkUser, [username], (err, result) => {
               if (err) throw err;
               req.session.user = result[0];
               req.session.save();
-              res.redirect('/');
+              res.redirect('/home');
           });
       });
   });
 });
 
 router.get('/home', (req, res) => {
+  let user = req.session.user; //this is how you get info from logged in user
   res.render('pages/home', { 
     //THIS WILL EVENTUALLY BE DATA FROM THE DB, THIS IS A PLACEHOLDER OBJ
     leaderboardPlayers: [
