@@ -17,6 +17,9 @@ router.get('/home', (req, res) => {
       {name: "jack_GOAT", score: 1499},
       {name: "melissa_GOAT", score: 1493},
       {name: "harold_from_accounting", score: 5}
+    ],
+    characterImages: [
+      "./images/characters/deadPeter.webp"
     ]
   });
 });
