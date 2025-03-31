@@ -17,19 +17,23 @@
         <main id="homeMain">
             <canvas id="gameCanvas" width="700" height="500" style="border: 5px solid black;"></canvas>
             <div id="leaderboardHolder">
-                <h2>Leaderboard</h2>
-                <!--This will all be dynamically populated, obviously-->
-                <ol>
-                    <!-- In the object passed to this ejs page when rendering, we need an array of objects: {name, score} called leaderboardPlayers-->
-                    <% for (let i = 0; i < leaderboardPlayers.length; i++){ %>
-                        <li>
-                            <!-- Name should be left-aligned, and score should be right-aligned -->
-                            <span class="leaderboardName"><%=leaderboardPlayers[i].name%></span>
-                            <span class="leaderboardScore"><%=leaderboardPlayers[i].score%></span>
-                        </li>
-                    <%}%>
-                </ol>
+              <h2>Leaderboard</h2>
+              <ol>
+                <% for (let i = 0; i < leaderboardPlayers.length; i++) { %>
+                  <li>
+                    <span class="leaderboardName"><%= leaderboardPlayers[i].name %></span>
+                    <span class="leaderboardScore"><%= leaderboardPlayers[i].score %></span>
+                  </li>
+                <% } %>
+              </ol>
+              <div class="yourRank">
+                <h2>Your Rank: <%= yourRank ? yourRank : 'Not available' %></h2>
+              </div>
+              <div class="yourScore">
+                <h2>Your Score: <%= yourScore ? yourScore : 'Not available' %></h2>
+              </div>
             </div>
+            
 
             <!-- This menu has links to "logout" and "settings." This div should be hidden by default and should appear when you click your profile picture. -->
             <div id="playerMenu">
