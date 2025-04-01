@@ -14,12 +14,19 @@
         <!-- We'll need to be able to render the character images in the game. To do that, we
         can load them into the DOM by putting them in a hidden div. This way, they get
         processed and can be referenced in home.js. -->
-        <div id="imageStorage" style="display: none;">
+        <div id="characterImageStorage" style="display: none;">
             <!-- characterImages should be an array of strings which are the paths to the images -->
             <% for (let i = 0; i < characterImages.length; i++){ %>
                 <img src="<%-characterImages[i]%>">
             <% } %>
         </div>
+        <div id="uiImageStorage" style="display: none;">
+            <!-- UIImages should be an array of strings which are the paths to the images -->
+            <% for (let i = 0; i < uiImages.length; i++){ %>
+                <img src="<%-uiImages[i]%>">
+            <% } %>
+        </div>
+
 
         <header>
             <h1>SOCIAL CIRCLES</h1>

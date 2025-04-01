@@ -20,6 +20,9 @@ router.get('/home', (req, res) => {
     ],
     characterImages: [
       "./images/characters/deadPeter.webp"
+    ],
+    uiImages: [
+      "./images/GameUI/melon.webp"
     ]
   });
 });
