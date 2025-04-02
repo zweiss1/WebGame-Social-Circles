@@ -4,7 +4,13 @@
 <head>
   <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
   <meta charset="UTF-8" />
-
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Roboto+Slab:wght@100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+    rel="stylesheet">
+  <link rel='stylesheet'
+    href='https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-straight/css/uicons-regular-straight.css'>
   <title>Social Circles</title>
   <link rel="stylesheet" href="/css/style.css">
 </head>
@@ -14,37 +20,44 @@
   <h1 class="site-header">WELCOME TO SOCIAL CIRCLES</h1>
   <div class="splashcontainer">
 
-    <div class="left-section">
-
-      <img id="logo" src="/images/logo.jpg" alt="Horn Studios Logo" class="site-logo" width="500" />
+    <div>
+      <img id="logo" src="/images/logo.png" alt="Horn Studios Logo" />
     </div>
 
+    <div class="auth-container">
+      <h2 class="auth-title">Sign up</h2>
 
-    <div class="right-section">
+      <form method="post" action="/signup">
 
-      <div class="login-container">
-        <h2 class="login-title">Sign Up</h2>
+        <label for="username">Username</label><br>
+        <div class="auth-field">
+          <div class="auth-icon">
+            <i class="fi fi-rs-user"></i>
+          </div>
+          <input type="text" id="username" class="auth-text" name="username"
+            placeholder="Enter a username" /><br><br>
+        </div>
 
-        <form action="signup" method="post">
-          <label for="username" class="login-label" style="font-weight: bold;">Username</label><br>
-          <input type="text" id="username" name="username" class="login-input" placeholder="Enter your username" /><br><br>
+        <label for="password">Password</label><br>
+        <div class="auth-field">
+          <div class="auth-icon">
+            <i class="fi fi-rs-lock"></i>
+          </div>
+          <input type="password" id="password" name="password" placeholder="Enter a password" /><br><br>
+        </div>
 
-          <label for="password" class="login-label" style="font-weight: bold;">Password</label><br>
-          <input type="password" id="password" name="password" class="login-input" placeholder="Enter your password" /><br><br>
-          <input type="submit" id="submit" value="submit">
-        </form>
-
-        <div class="login-actions">
-          <div style="text-align: center;">
+        <div class="auth-actions">
+          <div>
             <a href="/">Login with account</a>
             <br>
             <span>or</span>
             <br>
-            <a href="/home">Continue as guest</a>
+            <a href="/guest">Continue as guest</a>
           </div>
-          <button class="login-button">Log In</button>
+          <input type="submit" class="auth-button" value="Signup" />
         </div>
-      </div>
+
+      </form>
     </div>
   </div>
 </body>

@@ -16,6 +16,18 @@ router.get('/register', (req, res) => {
   res.render('pages/signup');
 });
 
+router.get('/guest', (req, res) => {
+  req.session.user = null;
+
+  req.session.save((err) => {
+    if (err) {
+      console.error('Session save error:', err);
+      return res.status(500).send('Server error');
+    }
+    res.render('pages/home');
+  }); 
+}); 
+
 router.post('/login', (req, res) => {
   const { username, password } = req.body;
   // Checks if user has an account

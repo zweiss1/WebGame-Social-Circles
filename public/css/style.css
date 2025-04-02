@@ -1,71 +1,84 @@
 html, body {
-    /* background-color: bisque; */
     background-color: #cfc5b0;
-    font-family: 'Roboto';
-    font-size: 22px;
-}
-
-h1 {
-    font-size: 50px;
-    margin-top: 25px;
-    margin-bottom: 50px;
+    font-family: 'Roboto Slab';
 }
 
 .splashcontainer {
     display: grid;
-    grid-template-columns: 40vw 60vw;
+    grid-template-columns: 50vw 50vw;
     margin-left: 45px;
 }
 
 .site-header {
-    margin-left:40px;
+    font-size: 60px;
+    margin-top: 25px;
+    margin-left: 25px;
+    margin-bottom: 50px;
 }
 
-.login-title {
+#logo {
+    width: 80%;
+}
+
+.auth-container {
+    margin-top:50px;
     font-size: 50px;
+    font-weight: 500;
+}
+
+.auth-title {
+    font-size: 70px;
     margin-top:20px;
     margin-bottom:50px;
 }
 
+.auth-icon {
+    border-bottom: 3px solid black;
+    display: flex;
+    padding-right:15px;
+    margin-bottom: 70px;
+    
+}
 
-#logo {
-    border-radius: 3px;
-    width: 100%;
+.auth-field {
+    width: 30vw;
+    padding-top:20px;
+    display: flex;
 }
 
 #password, #username {
     border: none;
     background: none;
     outline: none;
-    border-bottom: 1px solid black;
+    font-family: 'Roboto Slab';
+    border-bottom: 3px solid black;
+    width: 20vw;
+    font-size: 34px;
+    margin-bottom:70px;
 }
-
-.login-container {
-    margin-left: 60px;
-}
-
-.login-actions {
-    font-size:18px;
+.auth-actions {
+    font-size:24px;
     display: flex;
     flex-direction: row;
-    text-align: left;
+    text-align: center;
     align-items: center;
 }
 
-.login-button {
-    margin-left: 30px;
-    height: 40px;
-    width: 180px;
-    border-radius: 9px;
+.auth-button {
+    margin-left: 5vw;
+    height: 7vh;
+    width: 15vw;
+    border-radius: 12px;
     border: none;
     background-color: #cd9d59;
-    font-family: 'Roboto';
+    font-family: 'Roboto Slab';
     font-weight: bold;
-    font-size: 20px;
+    font-size: 50px;
 }
 
-.login-button:hover {
+.auth-button:hover {
     cursor: pointer;
+    background-color: #bd9153;
 }
 
 a {
