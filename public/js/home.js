@@ -55,6 +55,11 @@ class UIObject{
     containsPos(x, y){
         return x >= this.x && x <= this.x + this.width && y >= this.y && y <= this.y + this.height;
     }
+
+    // Width is treated as radius, Checks if a position is inside a circle originating at the center of the image
+    containsPosCircle(x, y){
+        
+    }
 }
 
 
