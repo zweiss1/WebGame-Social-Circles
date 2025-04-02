@@ -28,6 +28,86 @@ router.get('/guest', (req, res) => {
   }); 
 }); 
 
+
+router.get('/add_friend', (req, res) => {
+  res.render('pages/add_friend');
+});
+
+router.get('/account', (req, res) => {
+  const username = req.session.user; 
+  if (!username) {
+    return res.redirect('/login');
+  }
+
+  connection.query(
+    "SELECT * FROM friendships WHERE status = 'accepted' AND (username = ? OR friend_username = ?)",
+    [username, username], // Pass the username string twice
+    (err, friends) => {
+      if (err) return res.status(500).send(err);
+      
+      connection.query(
+        "SELECT * FROM friendships WHERE status = 'pending' AND friend_username = ?",
+        [username],
+        (err, pending) => {
+          if (err) return res.status(500).send(err);
+          res.render('pages/account', { friends, pending, user: username });
+        }
+      );
+    }
+  );
+});
+
+
+router.post("/accept", function(req, res) {
+  // Get current user's username (receiver) from session
+  const receiverUsername = req.session.user; 
+  const senderUsername = req.body.friend; 
+  if (!receiverUsername) {
+    return res.redirect("/login");
+  }
+
+  connection.query(
+    "UPDATE friendships SET status = 'accepted' " +
+    "WHERE friend_username = ? AND username = ?", // Match receiver & sender
+    [receiverUsername, senderUsername], 
+    function(err, result) {
+      if (err) {
+        console.error("Accept error:", err);
+        return res.status(500).send("Database error");
+      }
+      res.redirect("/account");
+    }
+  );
+});
+
+
+router.post("/block", function(req, res) {
+  // Get current user's username (receiver) from session
+  const receiverUsername = req.session.user; 
+  const senderUsername = req.body.friend; 
+
+  if (!receiverUsername) {
+    return res.redirect("/login");
+  }
+
+  connection.query(
+    "UPDATE friendships SET status = 'blocked' " +
+    "WHERE friend_username = ? AND username = ?", // Match receiver & sender
+    [receiverUsername, senderUsername], 
+    function(err, result) {
+      if (err) {
+        console.error("Block error:", err);
+        return res.status(500).send("Database error");
+      }
+      res.redirect("/account");
+    }
+  );
+});
+
+
+
+
+
 router.post('/login', (req, res) => {
   const { username, password } = req.body;
   // Checks if user has an account
@@ -41,7 +121,7 @@ router.post('/login', (req, res) => {
     if (!isValid) {
       return res.status(401).send('Invalid password');
     }
-    req.session.user = result[0];
+    req.session.user = result[0].username; // Store only the username string
     req.session.save();
     res.redirect('/home');
   });
@@ -61,10 +141,9 @@ router.post('/signup', async (req, res) => {
     let sql = 'INSERT INTO user_information(username, hash_password) VALUES(?,?)';
     connection.query(sql, [username, hash], (err, result) => {
       if (err) throw err;
-      // Querying user that was just added
       connection.query(checkUser, [username], (err, result) => {
         if (err) throw err;
-        req.session.user = result[0];
+        req.session.user = result[0].username; // Store only the username string
         req.session.save();
         res.redirect('/home');
       });
@@ -73,8 +152,8 @@ router.post('/signup', async (req, res) => {
 });
 
 router.get('/home', (req, res) => {
-  const user = req.session.user; // logged in user info
-  
+  const user = req.session.user; 
+
   // Get leaderboard data regardless of user login status
   const leaderboardSql = `
     SELECT username AS name, highscore AS score
@@ -90,16 +169,17 @@ router.get('/home', (req, res) => {
       return res.status(500).send('Internal Server Error');
     }
 
-    // If user is not logged in (guest), render the home page with default values
+    // If no user is logged in, render with default values and no user data.
     if (!user) {
       return res.render('pages/home', {
         leaderboardPlayers: leaderboardResults,
         yourRank: 'Not available',
-        yourScore: 'Not available'
+        yourScore: 'Not available',
+        user: null  
       });
     }
     
-    // If user is logged in, get their rank and score
+    // If user is logged in, get their rank and score.
     const userRankSql = `
       SELECT userRank, score FROM (
         SELECT username, highscore AS score,
@@ -111,7 +191,7 @@ router.get('/home', (req, res) => {
       WHERE username = ?
     `;
     
-    connection.query(userRankSql, [user.username], (err, userResult) => {
+    connection.query(userRankSql, [user], (err, userResult) => {
       if (err) {
         console.error('Error fetching user rank:', err);
         return res.status(500).send('Internal Server Error');
@@ -126,10 +206,74 @@ router.get('/home', (req, res) => {
       res.render('pages/home', {
         leaderboardPlayers: leaderboardResults,
         yourRank: yourRank || 'Not available',
-        yourScore: yourScore || 'Not available'
+        yourScore: yourScore || 'Not available',
+        user: user  // pass the user info
       });
     });
   });
 });
+
+
+
+router.post("/add_friend", (req, res) => {
+  if (!req.session.user) {
+    return res.status(401).send("Unauthorized");
+  }
+
+  const sender = req.session.user; 
+  const receiver = (req.body.username || "").trim();
+
+  if (!receiver) {
+    return res.status(400).send("Please enter a username.");
+  }
+
+  if (sender === receiver) {
+    return res.status(400).send("You cannot add yourself.");
+  }
+
+  // Check if receiver exists
+  connection.query(
+    "SELECT * FROM user_information WHERE username = ?",
+    [receiver],
+    (err, userResult) => {
+      if (err) {
+        console.error("Error checking user:", err);
+        return res.status(500).send("Database error");
+      }
+      if (userResult.length === 0) {
+        return res.status(404).send("User not found.");
+      }
+
+      // Check for existing friendship in either direction
+      connection.query(
+        "SELECT * FROM friendships WHERE (username = ? AND friend_username = ?) OR (username = ? AND friend_username = ?)",
+        [sender, receiver, receiver, sender],
+        (err, friendshipResult) => {
+          if (err) {
+            console.error("Error checking friendship:", err);
+            return res.status(500).send("Database error");
+          }
+          if (friendshipResult.length !== 0) {
+            return res.status(409).send("Request already exists.");
+          }
+
+          // Insert with sender as username and receiver as friend_username
+          connection.query(
+            "INSERT INTO friendships (username, friend_username, status) VALUES (?, ?, ?)",
+            [sender, receiver, "pending"],
+            (err, insertResult) => {
+              if (err) {
+                console.error("Error inserting friendship:", err);
+                return res.status(500).send("Database error");
+              }
+              res.redirect("/account");
+            }
+          );
+        }
+      );
+    }
+  );
+});
+
 
 module.exports = router;

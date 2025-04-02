@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Roboto+Slab:wght@100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-straight/css/uicons-regular-straight.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <title>Social Circles</title>
+</head>
+<body id="splashbody">
+  <header>
+    <h1>Account Settings</h1>
+  </header>
+  
+  <!-- Add Friend Form -->
+  <div class="auth-container">
+    <form method="post" action="/add_friend">
+      <label for="username">Add Friend</label><br>
+      <div class="auth-field">
+        <div class="auth-icon">
+          <i class="fi fi-rs-user"></i>
+        </div>
+        <input type="text" id="username" class="auth-text" name="username" placeholder="Enter the username" /><br><br>
+      </div>
+    </form>
+  </div>
+
+  <!-- Friend Board -->
+  <section>
+    <h2>Your Friends</h2>
+    <ul>
+      <% if (friends.length > 0) { %>
+        <% friends.forEach(function(f) { %>
+          <li>
+            <% // Display the friend’s username (the one that is not the current user) %>
+            <% if (f.username === user) { %>
+              <%= f.friend_username %>
+            <% } else { %>
+              <%= f.username %>
+            <% } %>
+          </li>
+        <% }); %>
+      <% } else { %>
+        <li>You have no friends yet.</li>
+      <% } %>
+    </ul>
+  </section>
+
+  <!-- Pending Friend Requests -->
+  <section>
+    <h2>Pending Friend Requests</h2>
+    <ul>
+      <% if (pending.length > 0) { %>
+        <% pending.forEach(function(p) { %>
+            <li>
+              <span><%= p.username %></span> <!-- Show the sender's username -->
+              <form method="post" action="/accept">
+                <input type="hidden" name="friend" value="<%= p.username %>" /> 
+                <button type="submit">Accept</button>
+              </form>
+              <form method="post" action="/block">
+                <input type="hidden" name="friend" value="<%= p.username %>" /> 
+                <button type="submit">Block</button>
+              </form>
+            </li>
+          <% }); %>
+      <% } else { %>
+        <li>No pending requests.</li>
+      <% } %>
+    </ul>
+  </section>
+</body>
+</html>

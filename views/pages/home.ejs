@@ -1,43 +1,49 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta lang="en">
-        <title>Social Circles</title>
-        <!-- A favicon could go here, I suppose -->
-        <link rel="stylesheet" href="/css/style.css">
-        <!-- home.js will do all of the interactive stuff on this page, and also the game (canvas) logic -->
-        <script src="/public/js/home.js"></script>
-    </head>
-
-    <body>
-        <header>
-            <h1>SOCIAL CIRCLES</h1>
-            <img id="profileButton" src="https://m.media-amazon.com/images/M/MV5BMzgzMzY2MmMtMWNkNy00ZjVkLWIxOWUtZDJjODNmY2IyOWFiXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" width="100" height="100">
-        </header>
-        <main id="homeMain">
-            <canvas id="gameCanvas" width="700" height="500" style="border: 5px solid black;"></canvas>
-            <div id="leaderboardHolder">
-              <h2>Leaderboard</h2>
-              <ol>
-                <% for (let i = 0; i < leaderboardPlayers.length; i++) { %>
-                  <li>
-                    <span class="leaderboardName"><%= leaderboardPlayers[i].name %></span>
-                    <span class="leaderboardScore"><%= leaderboardPlayers[i].score %></span>
-                  </li>
-                <% } %>
-              </ol>
-              <div class="yourRank">
-                <h2>Your Rank: <%= yourRank ? yourRank : 'Not available' %></h2>
-              </div>
-              <div class="yourScore">
-                <h2>Your Score: <%= yourScore ? yourScore : 'Not available' %></h2>
-              </div>
-            </div>
-            
-
-            <!-- This menu has links to "logout" and "settings." This div should be hidden by default and should appear when you click your profile picture. -->
-            <div id="playerMenu">
-            </div>
-        </main>
-    </body>
+  <head>
+    <meta lang="en">
+    <title>Social Circles</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="/public/js/home.js"></script>
+  </head>
+  <body>
+    <header>
+      <h1>SOCIAL CIRCLES</h1>
+      <img id="profileButton" src="https://m.media-amazon.com/images/M/MV5BMzgzMzY2MmMtMWNkNy00ZjVkLWIxOWUtZDJjODNmY2IyOWFiXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" width="100" height="100">
+    </header>
+    <main id="homeMain">
+      <canvas id="gameCanvas" width="700" height="500" style="border: 5px solid black;"></canvas>
+      <div id="leaderboardHolder">
+        <h2>Leaderboard</h2>
+        <ol>
+          <% for (let i = 0; i < leaderboardPlayers.length; i++) { %>
+            <li>
+              <span class="leaderboardName"><%= leaderboardPlayers[i].name %></span>
+              <span class="leaderboardScore"><%= leaderboardPlayers[i].score %></span>
+            </li>
+          <% } %>
+        </ol>
+        <!-- Optionally, you could also conditionally show the following depending on your needs -->
+        <% if (user) { %>
+          <div class="yourRank">
+            <h2>Your Rank: <%= yourRank %></h2>
+          </div>
+          <div class="yourScore">
+            <h2>Your Score: <%= yourScore %></h2>
+          </div>
+        <% } %>
+      </div>
+      
+      <!-- Only show account settings if a user is logged in -->
+      <% if (user) { %>
+        <div class="auth-actions">
+          <div>
+            <a href="/account">Account Settings</a>
+            <br>
+          </div>
+        </div>
+      <% } %>
+      
+    </main>
+  </body>
 </html>

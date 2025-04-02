@@ -31,8 +31,7 @@ CREATE TABLE `friendships` (
   PRIMARY KEY (`username`,`friend_username`),
   KEY `friend_username` (`friend_username`),
   CONSTRAINT `friendships_ibfk_1` FOREIGN KEY (`username`) REFERENCES `user_information` (`username`),
-  CONSTRAINT `friendships_ibfk_2` FOREIGN KEY (`friend_username`) REFERENCES `user_information` (`username`),
-  CONSTRAINT `friendships_chk_1` CHECK ((`username` < `friend_username`))
+  CONSTRAINT `friendships_ibfk_2` FOREIGN KEY (`friend_username`) REFERENCES `user_information` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -42,7 +41,7 @@ CREATE TABLE `friendships` (
 
 LOCK TABLES `friendships` WRITE;
 /*!40000 ALTER TABLE `friendships` DISABLE KEYS */;
-INSERT INTO `friendships` VALUES ('DrHorn','ToddH','accepted');
+INSERT INTO `friendships` VALUES ('cheese','chase','blocked'),('DrHorn','ToddH','accepted'),('node','chase','accepted');
 /*!40000 ALTER TABLE `friendships` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -58,6 +57,8 @@ CREATE TABLE `user_information` (
   `hash_password` varchar(60) NOT NULL,
   `highscore` bigint DEFAULT '0',
   `is_active` tinyint(1) DEFAULT '1',
+  `isAdmin` tinyint(1) DEFAULT '0',
+  `darkMode` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -68,7 +69,7 @@ CREATE TABLE `user_information` (
 
 LOCK TABLES `user_information` WRITE;
 /*!40000 ALTER TABLE `user_information` DISABLE KEYS */;
-INSERT INTO `user_information` VALUES ('DrHorn','passwordToBeHashed',150,1),('ToddH','1234abcd',100,1);
+INSERT INTO `user_information` VALUES ('aaaa','$2b$13$EnBgy6zfk/I/m2QDA23NP.467nA7gT2LldB26G6SDH.OW8VcSeUa.',0,1,0,0),('bill','$2b$13$wxaGuGmC47nE9U01BCf7nO0xSPMxp3xObPW6iUC.fy3uj9YVvSJIi',0,1,0,0),('bob','$2b$13$ajM.F5JK1gRIy0i4IaJvEeYKI4s3gJsxP5UM1flHYeHlPcOhTldWe',0,1,0,0),('chase','$2b$13$WLY6sl8QrJDMjZi63YV2ju9vpyk6Rq4YP988aYRJaMe5pE4AfKsgy',0,1,0,0),('cheese','$2b$13$HztvERJ6.q9ARQexhsVDQeATPE61SAdSDqOYSsjEQglk.kjPu899W',0,1,0,0),('DrHorn','sample_hashed_password2',150,1,0,0),('node','$2b$13$Yl0XKTmbyXqL6AMZGy.5DeVDc367JGjAhH96xRuLCnePH8Sw0BTuu',0,1,0,0),('ToddH','sample_hashed_password1',100,1,0,0);
 /*!40000 ALTER TABLE `user_information` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -81,4 +82,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-03-30  0:21:15
+-- Dump completed on 2025-04-02 17:31:27
