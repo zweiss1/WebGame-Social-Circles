@@ -16,6 +16,10 @@ router.get('/register', (req, res) => {
   res.render('pages/signup');
 });
 
+router.get('/deactivated', (req, res) => {
+  res.render('pages/deactivate');
+});
+
 router.get('/guest', (req, res) => {
   req.session.user = null;
   req.session.save((err) => {
@@ -32,20 +36,31 @@ router.get('/add_friend', (req, res) => {
   res.render('pages/add_friend');
 });
 
-router.get('/account', (req, res) => {
+router.get('/account', checkActive, (req, res) => {
   const username = req.session.user; 
   if (!username) {
     return res.redirect('/login');
   }
 
+  // Modified accepted friends query
   connection.query(
-    "SELECT * FROM friendships WHERE status = 'accepted' AND (username = ? OR friend_username = ?)",
-    [username, username], // Pass the username string twice
+    `SELECT f.* 
+     FROM friendships f
+     JOIN user_information u1 ON f.username = u1.username AND u1.is_active = 1
+     JOIN user_information u2 ON f.friend_username = u2.username AND u2.is_active = 1
+     WHERE f.status = 'accepted' 
+       AND (f.username = ? OR f.friend_username = ?)`,
+    [username, username],
     (err, friends) => {
       if (err) return res.status(500).send(err);
       
+      // Modified pending requests query
       connection.query(
-        "SELECT * FROM friendships WHERE status = 'pending' AND friend_username = ?",
+        `SELECT f.* 
+         FROM friendships f
+         JOIN user_information u ON f.username = u.username AND u.is_active = 1
+         WHERE f.status = 'pending' 
+           AND f.friend_username = ?`,
         [username],
         (err, pending) => {
           if (err) return res.status(500).send(err);
@@ -139,6 +154,10 @@ router.post('/login', (req, res) => {
     if (!isValid) {
       return res.status(401).send('Invalid password');
     }
+    const user = result[0];
+    if (user.is_active !== 1){ 
+      return res.render('pages/deactivate');
+    }
     req.session.user = result[0].username; // Store only the username string
     req.session.save();
     res.redirect('/home');
@@ -169,7 +188,7 @@ router.post('/signup', async (req, res) => {
   });
 });
 
-router.get('/home', (req, res) => {
+router.get('/home', checkActive, (req, res) => {
   const user = req.session.user; 
 
   // Get leaderboard data regardless of user login status
@@ -214,7 +233,7 @@ router.get('/home', (req, res) => {
         console.error('Error fetching user rank:', err);
         return res.status(500).send('Internal Server Error');
       }
-    
+      //your rank query
       let yourRank = null, yourScore = null;
       if (userResult && userResult.length > 0) {
         yourRank = userResult[0].userRank;
@@ -222,27 +241,26 @@ router.get('/home', (req, res) => {
       }
       // friend leaderboard query 
       const friendLeaderboardSql = `
-        SELECT u.username AS name, u.highscore AS score
-        FROM user_information u
-        WHERE u.username IN (
-          SELECT CASE 
-            WHEN f.username = ? THEN f.friend_username 
-            ELSE f.username 
-          END AS friend
-          FROM friendships f
-          WHERE f.status = 'accepted' 
-            AND (f.username = ? OR f.friend_username = ?)
-        )
-        ORDER BY u.highscore DESC
-        LIMIT 10
-      `;
+      SELECT u.username AS name, u.highscore AS score
+      FROM user_information u
+      WHERE u.is_active = 1 AND u.username IN (
+        SELECT CASE 
+          WHEN f.username = ? THEN f.friend_username 
+          ELSE f.username 
+        END
+        FROM friendships f
+        WHERE f.status = 'accepted'
+          AND (f.username = ? OR f.friend_username = ?)
+      )
+      ORDER BY u.highscore DESC
+      LIMIT 10`;
 
       connection.query(friendLeaderboardSql, [user, user, user], (err, friendLeaderboardResults) => {
         if (err) {
           console.error('Error fetching friend leaderboard:', err);
           return res.status(500).send('Internal Server Error');
         }      
-        
+
         res.render('pages/home', {
           leaderboardPlayers: leaderboardResults,
           yourRank: yourRank || 'Not available',
@@ -257,7 +275,7 @@ router.get('/home', (req, res) => {
 
 
 
-router.post("/add_friend", (req, res) => {
+router.post('/add_friend', checkActive, (req, res) => {
   if (!req.session.user) {
     return res.status(401).send("Unauthorized");
   }
@@ -317,5 +335,19 @@ router.post("/add_friend", (req, res) => {
   );
 });
 
+
+function checkActive(req, res, next) {
+  if (!req.session.user) return next();
+  
+  connection.query('SELECT is_active FROM user_information WHERE username = ?', 
+    [req.session.user], 
+    (err, results) => {
+      if (err || !results.length || results[0].is_active !== 1) {
+        req.session.destroy(() => res.redirect('/deactivated'));
+      } else {
+        next();
+      }
+  });
+}
 
 module.exports = router;
