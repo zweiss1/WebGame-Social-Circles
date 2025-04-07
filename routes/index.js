@@ -220,12 +220,36 @@ router.get('/home', (req, res) => {
         yourRank = userResult[0].userRank;
         yourScore = (userResult[0].score != null) ? userResult[0].score.toString() : 'Not available';
       }
-    
-      res.render('pages/home', {
-        leaderboardPlayers: leaderboardResults,
-        yourRank: yourRank || 'Not available',
-        yourScore: yourScore || 'Not available',
-        user: user  // pass the user info
+      // friend leaderboard query 
+      const friendLeaderboardSql = `
+        SELECT u.username AS name, u.highscore AS score
+        FROM user_information u
+        WHERE u.username IN (
+          SELECT CASE 
+            WHEN f.username = ? THEN f.friend_username 
+            ELSE f.username 
+          END AS friend
+          FROM friendships f
+          WHERE f.status = 'accepted' 
+            AND (f.username = ? OR f.friend_username = ?)
+        )
+        ORDER BY u.highscore DESC
+        LIMIT 10
+      `;
+
+      connection.query(friendLeaderboardSql, [user, user, user], (err, friendLeaderboardResults) => {
+        if (err) {
+          console.error('Error fetching friend leaderboard:', err);
+          return res.status(500).send('Internal Server Error');
+        }      
+        
+        res.render('pages/home', {
+          leaderboardPlayers: leaderboardResults,
+          yourRank: yourRank || 'Not available',
+          yourScore: yourScore || 'Not available',
+          user: user,
+          friendLeaderboard: friendLeaderboardResults
+        });
       });
     });
   });

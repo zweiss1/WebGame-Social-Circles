@@ -30,7 +30,19 @@
           <div class="yourScore">
             <h2>Your Score: <%= yourScore %></h2>
           </div>
-        <% } %>
+          <!-- Friend Leaderboard -->
+          <div class="friendLeaderboard">
+            <h2>Friend Leaderboard</h2>
+            <ol>
+              <% for (let i = 0; i < friendLeaderboard.length; i++) { %>
+                <li>
+                  <span class="leaderboardName"><%= friendLeaderboard[i].name %></span>
+                  <span class="leaderboardScore"><%= friendLeaderboard[i].score %></span>
+                </li>
+              <% } %>
+            </ol>
+          </div>
+        <% } %>  
       </div>
       
       <!-- Only show account settings if a user is logged in -->
