@@ -104,7 +104,26 @@ router.post("/block", function(req, res) {
 });
 
 
-
+router.post("/remove", function(req, res) {
+  // Get current user's username (receiver) from session
+  const receiverUsername = req.session.user; 
+  const senderUsername = req.body.friend; 
+  
+  if (!receiverUsername) {
+    return res.redirect("/login");
+  }
+  connection.query(
+    "DELETE FROM friendships WHERE (friend_username = ? AND username = ?) OR (friend_username = ? AND username = ?)",
+    [receiverUsername, senderUsername, senderUsername, receiverUsername],
+    (err, insertResult) => {
+      if (err) {
+        console.error("Error inserting friendship:", err);
+        return res.status(500).send("Database error");
+      }
+      res.redirect("/account");
+    }
+  );
+});
 
 
 router.post('/login', (req, res) => {

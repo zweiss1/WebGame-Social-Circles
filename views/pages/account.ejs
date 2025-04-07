@@ -38,8 +38,17 @@
             <% // Display the friend’s username (the one that is not the current user) %>
             <% if (f.username === user) { %>
               <%= f.friend_username %>
+              <span><%= f.friend_username %></span> 
+              <form method="post" action="/remove">
+                <input type="hidden" name="friend" value="<%= f.friend_username %>" /> 
+                <button type="submit">Remove</button>
+              </form>
             <% } else { %>
-              <%= f.username %>
+              <span><%= f.username %></span> 
+              <form method="post" action="/remove">
+                <input type="hidden" name="friend" value="<%= f.username %>" /> 
+                <button type="submit">Remove</button>
+              </form>
             <% } %>
           </li>
         <% }); %>
