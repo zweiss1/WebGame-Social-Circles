@@ -1,0 +1,46 @@
+/* public/css/styleDark.css */
+
+/* page background & text */
+html, body {
+    background-color: #121212;
+    color: #e0e0e0;
+  }
+  
+  /* header */
+  header {
+    background-color: #1f1f1f;
+    border-bottom: 1px solid #333;
+  }
+  
+  /* links */
+  a {
+    color: #bb86fc;
+  }
+  
+  /* buttons */
+  .auth-button {
+    background-color: #333333;
+    color: #e0e0e0;
+  }
+  .auth-button:hover {
+    background-color: #444444;
+  }
+  
+  /* canvas border */
+  #gameCanvas {
+    border: 5px solid #444444 !important;
+  }
+  
+  /* leaderboard text */
+  .leaderboardName,
+  .leaderboardScore {
+    color: #e0e0e0;
+  }
+  
+  /* form inputs, panels, etc… */
+  input, select, textarea {
+    background-color: #1e1e1e;
+    color: #e0e0e0;
+    border-color: #444;
+  }
+  

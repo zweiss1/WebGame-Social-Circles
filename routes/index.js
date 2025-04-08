@@ -16,9 +16,6 @@ router.get('/register', (req, res) => {
   res.render('pages/signup');
 });
 
-router.get('/deactivated', (req, res) => {
-  res.render('pages/deactivate');
-});
 
 router.get('/guest', (req, res) => {
   req.session.user = null;
@@ -71,6 +68,14 @@ router.get('/account', checkActive, (req, res) => {
   );
 });
 
+
+router.get('/deactivated', (req, res) => {
+  const username = req.session.user;
+  if (!username) {
+    return res.redirect('/login');
+  }
+  res.render('pages/deactivate');
+});
 
 router.post("/accept", function(req, res) {
   // Get current user's username (receiver) from session
@@ -155,11 +160,11 @@ router.post('/login', (req, res) => {
       return res.status(401).send('Invalid password');
     }
     const user = result[0];
+    req.session.user = result[0].username; // Store only the username string
+    req.session.save();
     if (user.is_active !== 1){ 
       return res.render('pages/deactivate');
     }
-    req.session.user = result[0].username; // Store only the username string
-    req.session.save();
     res.redirect('/home');
   });
 });
@@ -212,7 +217,7 @@ router.get('/home', checkActive, (req, res) => {
         leaderboardPlayers: leaderboardResults,
         yourRank: 'Not available',
         yourScore: 'Not available',
-        user: null  
+        user: null
       });
     }
     
@@ -335,10 +340,45 @@ router.post('/add_friend', checkActive, (req, res) => {
   );
 });
 
+router.post('/deactivated', checkActive, (req, res) => {
+  if (!req.session.user) {
+    return res.status(401).send("Unauthorized");
+  }
+  const user = req.session.user; 
+  connection.query(
+    "UPDATE user_information SET is_active = 0 " +
+    "WHERE username = ?",
+    [user], 
+    function(err, result) {
+      if (err) {
+        console.error("Block error:", err);
+        return res.status(500).send("Database error");
+      }
+      res.redirect("/deactivated");
+    }
+  );
+});
+
+router.post('/reactivate', (req, res) => {
+  const username = req.session.user; 
+  if (!username) {
+    return res.status(401).send("Unauthorized");
+  }
+  connection.query(
+    "UPDATE user_information SET is_active = 1 WHERE username = ?",
+    [username],
+    (err, result) => {
+      if (err) {
+        console.error("Reactivate error:", err);
+        return res.status(500).send("Database error");
+      }
+      res.redirect('/home'); 
+    }
+  );
+});
 
 function checkActive(req, res, next) {
   if (!req.session.user) return next();
-  
   connection.query('SELECT is_active FROM user_information WHERE username = ?', 
     [req.session.user], 
     (err, results) => {
@@ -349,5 +389,9 @@ function checkActive(req, res, next) {
       }
   });
 }
+
+
+
+
 
 module.exports = router;
