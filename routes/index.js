@@ -18,11 +18,21 @@ router.get('/home', (req, res) => {
       {name: "melissa_GOAT", score: 1493},
       {name: "harold_from_accounting", score: 5}
     ],
-    characterImages: [
-      "./images/characters/deadPeter.webp"
+    characterImages: [ // Dynamically populate these arrays with the paths to every file in characters and GameUI
+      //"./images/characters/deadPeter.webp",
+      "./images/characters/chet.png",
+      "./images/characters/howard.png",
+      "./images/characters/harold.png",
+      "./images/characters/melissa.png",
+      "./images/characters/valerie.png",
+      "./images/characters/sharon.png",
+      "./images/characters/tyler.png",
+      "./images/characters/margot.png",
+      "./images/characters/henry.png"
     ],
     uiImages: [
-      "./images/GameUI/melon.webp"
+      //"./images/GameUI/melon.webp",
+      "./images/GameUI/blueCircle.png"
     ]
   });
 });
