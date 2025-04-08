@@ -72,7 +72,7 @@ class Character{
         this.like = like;
         this.dislike = dislike;
         // TODO: the onclick function for a character should give a tooltip or open the characters page or something
-        this.ui = new UIObject(name, img, x, y, 3, 75, 75, true, true, undefined);
+        this.ui = new UIObject(name, img, x, y, 3, 75, 75, false, false, undefined);
     }
 
 
@@ -158,39 +158,31 @@ class SocialCircle{
         this.characters[character1.name] = character1;
         this.characters[character2.name] = character2;
         this.characters[character3.name] = character3;
+    }
 
+    //Draw the social circle and the characters inside
+    draw(x = this.ui.x, y = this.ui.y, w = this.ui.width, h = this.ui.height){
+        // Draw the social circle first, since the characters are rendered on top of it
+        this.ui.draw(x, y, w, h);
+
+        // Then draw the characters.
         let arr = Object.values(this.characters);
+
 
         // create positions to draw the characters at inside of the circle. They should make a triangle.
         arr[0].ui.x = (this.ui.centerX - (this.ui.width / 4)) - (arr[0].ui.width / 2);
         arr[0].ui.y = (this.ui.centerY + (this.ui.height / 4)) - (arr[0].ui.height / 2);
-        //this.charCenterPos1X = this.ui.centerX - (this.ui.width / 4);
-        //this.charCenterPos1Y = this.ui.centerY + (this.ui.height / 4);
 
         arr[1].ui.x = this.ui.centerX - (arr[1].ui.width / 2);
-        arr[1].ui.y = (this.ui.centerX - (this.ui.height / 4)) - (arr[1].ui.height / 2);
-        // this.charCenterPos2X = this.ui.centerX;
-        // this.charCenterPos2Y = this.ui.centerY - (this.ui.height / 4);
+        arr[1].ui.y = (this.ui.centerY - (this.ui.height / 4)) - (arr[1].ui.height / 2);
 
         arr[2].ui.x = (this.ui.centerX + (this.ui.width / 4)) - (arr[2].ui.width / 2);
         arr[2].ui.y = (this.ui.centerY + (this.ui.height / 4)) - (arr[2].ui.height / 2);
-        // this.charCenterPos3X = this.ui.centerX + (this.ui.width / 4);
-        // this.charCenterPos3Y = this.ui.centerY + (this.ui.height / 4);
 
-        arr[0].draw(undefined, undefined, undefined, undefined);
-        arr[1].draw(undefined, undefined, undefined, undefined);
-        arr[2].draw(undefined, undefined, undefined, undefined);
-    }
-
-    draw(x, y, w, h){
-        // Draw the social circle first, since the characters are rendered on top of it
-        this.ui.draw(x, y, w, h);
-
-        // Then draw the characters. I'm using drawCenter because it's easier to think about positions of images being based on their centers rather than their top left corners.
-        let arr = Object.keys(this.characters);
-        arr[0].drawCenter(this.charCenterPos1X, this.charCenterPos1Y, undefined, undefined);
-        arr[1].drawCenter(this.charCenterPos2X, this.charCenterPos2Y, undefined, undefined);
-        arr[2].drawCenter(this.charCenterPos3X, this.charCenterPos3Y, undefined, undefined);
+        // Now we draw the characters using the default values
+        arr[0].ui.draw(undefined, undefined, undefined, undefined);
+        arr[1].ui.draw(undefined, undefined, undefined, undefined);
+        arr[2].ui.draw(undefined, undefined, undefined, undefined);
     }
 }
 
@@ -259,35 +251,65 @@ class UIObject{
 // CANVAS LOGIC
 
 let selectedCircle = null;
+let startedGame = false;
 
+
+
+// Create the UIObjects for the social circles and the selection circle (add buttons here later?)
 function initializeUI(){
     //draw the 3 social circles
-    UIObjects["leftCircle"] = new UIObject("leftCircle", UIImages["blueCircle"], 0, 175, 2, 250, 250, true, true, onCircleClicked);
-    UIObjects["middleCircle"] = new UIObject("middleCircle", UIImages["blueCircle"], 225, 0, 2, 250, 250, true, true, onCircleClicked);
-    UIObjects["rightCircle"] = new UIObject("rightCircle", UIImages["blueCircle"], 450, 175, 2, 250, 250, true, true, onCircleClicked);
+    UIObjects["leftCircle"] = new UIObject("leftCircle", UIImages["blueCircle"], 0, 175, 2, 250, 250, true, false, onCircleClicked);
+    UIObjects["middleCircle"] = new UIObject("middleCircle", UIImages["blueCircle"], 225, 0, 2, 250, 250, true, false, onCircleClicked);
+    UIObjects["rightCircle"] = new UIObject("rightCircle", UIImages["blueCircle"], 450, 175, 2, 250, 250, true, false, onCircleClicked);
     
     //the background that renders behind the selected circle (draw this as mainCircle.x - 5 and mainCircle.y - 5 since it's wider and taller.)
-    UIObjects["selectionCircle"] = new UIObject("selectionCircle", UIImages["blueCircle"], 0, 0, 1, 260, 260, true, false, undefined);
+    UIObjects["selectionCircle"] = new UIObject("selectionCircle", UIImages["purpleCircle"], 0, 0, 1, 260, 260, true, false, () => {});
+
+    // buttons should be centered with the circles, but 40 pixels thinner
+    UIObjects["partybtn"] = new UIObject("partybtn", UIImages["partybtn"], 20, 440, 3, 192, 40, false, false, () => {console.log("Party!");});
+    UIObjects["rizzbtn"] = new UIObject("rizzbtn", UIImages["rizzbtn"], 252, 440, 3, 192, 40, false, false, () => {console.log("Rizz!");});
+    UIObjects["coalminebtn"] = new UIObject("coalminebtn", UIImages["coalminebtn"], 484, 440, 3, 192, 40, false, false, () => {console.log("Coal Mine!");});
 }
 
 
-// Render all canvas objects in order of least to greatest Z-value
+// Render all UIObjects in order of least to greatest Z-value
 function renderUI(){
-    let keys = Object.keys(UIObjects);
-    keys.sort((key1, key2) => UIObjects[key1].z - UIObjects[key2].z);
-    console.log(keys);
-    keys.forEach((key, i) => {
-        console.log(key);
-        console.log(UIObjects[key].z);
-    });
+    // let keys = Object.keys(UIObjects);
+    // keys.sort((key1, key2) => UIObjects[key1].z - UIObjects[key2].z);
+    // console.log(keys);
+    // keys.forEach((key, i) => {
+    //     console.log(key);
+    //     console.log(UIObjects[key].z);
+    // });
 
-    for (let i = 0; i < keys.length; i++){
-        let obj = UIObjects[keys[i]];
+    // for (let i = 0; i < keys.length; i++){
+    //     let obj = UIObjects[keys[i]];
 
-        // only draw the selection circle if a circle has been selected
-        if (keys[i] != "selectionCircle" || keys[i] == "selectionCircle" && selectedCircle != null){
-            obj.draw();
-        }
+    //     // only draw the selection circle if a circle has been selected
+    //     if (keys[i] != "selectionCircle" || keys[i] == "selectionCircle" && selectedCircle != null){
+    //         obj.draw();
+    //     }
+    // }
+    
+    // Draw selection circle if a circle has been selected
+    if (selectedCircle != null){
+        UIObjects["selectionCircle"].draw();
+    }
+
+    // Next, draw the social circles
+    socialCircles["leftCircle"].draw(undefined, undefined, undefined, undefined);
+    socialCircles["middleCircle"].draw(undefined, undefined, undefined, undefined);
+    socialCircles["rightCircle"].draw(undefined, undefined, undefined, undefined);
+
+    UIObjects["partybtn"].draw(undefined, undefined, undefined, undefined);
+    UIObjects["coalminebtn"].draw(undefined, undefined, undefined, undefined);
+    UIObjects["rizzbtn"].draw(undefined, undefined, undefined, undefined);
+
+    // Gray out the buttons if a circle isn't selected, to make it clear that they can't be clicked
+    if (selectedCircle == null){
+        grayOut(UIObjects["partybtn"]);
+        grayOut(UIObjects["coalminebtn"]);
+        grayOut(UIObjects["rizzbtn"]);
     }
 }
 
@@ -311,6 +333,13 @@ function onCircleClicked(){
 
 function clearCanvas(){
     context.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+// grays out a ui element by drawing a gray box over it
+function grayOut(uiObject){
+    context.globalAlpha = 0.8;
+    context.drawImage(UIImages["gray"], uiObject.x, uiObject.y, uiObject.width, uiObject.height);
+    context.globalAlpha = 1;
 }
 
 // Grabs the name of a source image from an img element without the file extension. 
@@ -357,7 +386,6 @@ function parseSrcName(nameStr){
 }
 
 
-
 // given an X and Y position of a click, return the UI element with the highest Z-value that was clicked. This can return null.
 function getClickedElement(x, y){
     let clicked = null;
@@ -371,6 +399,7 @@ function getClickedElement(x, y){
 
     return clicked;
 }
+
 function getClickedElements(x, y){
     let clicked = [];
     for (let i = 0; i < Object.keys(UIObjects).length; i++){
@@ -448,5 +477,8 @@ function onDOMLoaded(event){
     generateCharacters();
 
     // Create the social circles and assign the characters to them
-    
+    createSocialCircles();
+
+    // Finally, render the UI
+    renderUI();
 }

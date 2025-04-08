@@ -32,7 +32,13 @@ router.get('/home', (req, res) => {
     ],
     uiImages: [
       //"./images/GameUI/melon.webp",
-      "./images/GameUI/blueCircle.png"
+      "./images/GameUI/blueCircle.png", // social circle
+      "./images/GameUI/purpleCircle.png", // social circle highlight
+      "./images/GameUI/partybtn.png", //buttons
+      "./images/GameUI/rizzbtn.png",
+      "./images/GameUI/coalminebtn.png",
+      "./images/GameUI/startbtn.png",
+      "./images/GameUI/gray.webp" // gray filter for when buttons can't be clicked
     ]
   });
 });
