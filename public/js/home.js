@@ -252,6 +252,11 @@ class UIObject{
 
 let selectedCircle = null;
 let startedGame = false;
+let points = 0;
+
+
+
+// TODO: Add button logic, add rounds, points, games, high score, merge with other branches.
 
 
 
@@ -274,23 +279,6 @@ function initializeUI(){
 
 // Render all UIObjects in order of least to greatest Z-value
 function renderUI(){
-    // let keys = Object.keys(UIObjects);
-    // keys.sort((key1, key2) => UIObjects[key1].z - UIObjects[key2].z);
-    // console.log(keys);
-    // keys.forEach((key, i) => {
-    //     console.log(key);
-    //     console.log(UIObjects[key].z);
-    // });
-
-    // for (let i = 0; i < keys.length; i++){
-    //     let obj = UIObjects[keys[i]];
-
-    //     // only draw the selection circle if a circle has been selected
-    //     if (keys[i] != "selectionCircle" || keys[i] == "selectionCircle" && selectedCircle != null){
-    //         obj.draw();
-    //     }
-    // }
-    
     // Draw selection circle if a circle has been selected
     if (selectedCircle != null){
         UIObjects["selectionCircle"].draw();
@@ -311,6 +299,13 @@ function renderUI(){
         grayOut(UIObjects["coalminebtn"]);
         grayOut(UIObjects["rizzbtn"]);
     }
+}
+
+function startGame(){
+    startedGame = true;
+    clearCanvas();
+    points = 0;
+    renderUI();
 }
 
 // Callback for when a social circle is clicked
@@ -335,8 +330,14 @@ function clearCanvas(){
     context.clearRect(0, 0, canvas.width, canvas.height);
 }
 
-// grays out a ui element by drawing a gray box over it
+// grays out a ui element by drawing a gray box over it. if the arg is null, gray out the whole canvas
 function grayOut(uiObject){
+    if (uiObject == null){
+        context.globalAlpha = 0.8;
+        context.drawImage(UIImages["gray"], 0, 0, canvas.width, canvas.height);
+        context.globalAlpha = 1;
+        return;
+    }
     context.globalAlpha = 0.8;
     context.drawImage(UIImages["gray"], uiObject.x, uiObject.y, uiObject.width, uiObject.height);
     context.globalAlpha = 1;
@@ -414,6 +415,13 @@ function getClickedElements(x, y){
 }
 
 function onCanvasClicked(event){
+    // if the game hasn't started, just start it
+    if (!startedGame){
+        startGame();
+        return;
+    }
+
+
     //Get the position of the mouse click relative to the canvas (rather than the page)
     let x = event.x - canvas.getBoundingClientRect().x; // absolute pos of mouse click - absolute pos of canvas = pos of mouse relative to canvas
     let y = event.y - canvas.getBoundingClientRect().y;
@@ -451,7 +459,7 @@ function onCanvasClicked(event){
 
 // SETUP CALLBACKS
 
-
+// wait until DOM is loaded so we can reference images without worrying about if they're loaded or not
 function onDOMLoaded(event){
     // Store character images in characterImages
     characterImageHolder.querySelectorAll("img").forEach((img, index) => {
@@ -479,6 +487,9 @@ function onDOMLoaded(event){
     // Create the social circles and assign the characters to them
     createSocialCircles();
 
-    // Finally, render the UI
+    // then, render the UI
     renderUI();
+
+    // Now, we can gray out the screen until they click the canvas to start the game
+    grayOut(null);
 }
