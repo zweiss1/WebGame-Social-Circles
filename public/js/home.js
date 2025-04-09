@@ -104,18 +104,15 @@ function createSocialCircles(){
     socialCircles["rightCircle"] = new SocialCircle(characters["tyler"], characters["valerie"], characters["chet"], UIObjects["rightCircle"]);
 }
 
+// Shuffles the 9 characters around the social circles. Do between rounds.
 function shuffleCharacters(){
     // Turn the characters into an array
     let chars = [];
-    chars.push(socialCircles["leftCircle"].character1);
-    chars.push(socialCircles["leftCircle"].character2);
-    chars.push(socialCircles["leftCircle"].character3);
-    chars.push(socialCircles["middleCircle"].character1);
-    chars.push(socialCircles["middleCircle"].character2);
-    chars.push(socialCircles["middleCircle"].character3);
-    chars.push(socialCircles["rightCircle"].character1);
-    chars.push(socialCircles["rightCircle"].character2);
-    chars.push(socialCircles["rightCircle"].character3);
+    Object.values(socialCircles).forEach((circle, index) => {
+        Object.values(circle.characters).forEach((char, index) => {
+            chars.push(char);
+        });
+    });
 
     // Now, shuffle the array (3 times for good measure)
     shuffle(chars);
@@ -123,15 +120,34 @@ function shuffleCharacters(){
     shuffle(chars);
 
     // Now, put the characters in the slots
-    socialCircles["leftCircle"].character1 = chars.pop();
-    socialCircles["leftCircle"].character2 = chars.pop();
-    socialCircles["leftCircle"].character3 = chars.pop();
-    socialCircles["middleCircle"].character1 = chars.pop();
-    socialCircles["middleCircle"].character2 = chars.pop();
-    socialCircles["middleCircle"].character3 = chars.pop();
-    socialCircles["rightCircle"].character1 = chars.pop();
-    socialCircles["rightCircle"].character2 = chars.pop();
-    socialCircles["rightCircle"].character3 = chars.pop();
+    socialCircles["leftCircle"].characters = {}; // populate left circle
+    for (let i = 0; i < 3; i++){
+        let char = chars.pop();
+        socialCircles["leftCircle"].characters[char.name] = char;
+    }
+
+    socialCircles["middleCircle"].characters = {}; // populate left circle
+    for (let i = 0; i < 3; i++){
+        let char = chars.pop();
+        socialCircles["middleCircle"].characters[char.name] = char;
+    }
+
+    socialCircles["rightCircle"].characters = {}; // populate left circle
+    for (let i = 0; i < 3; i++){
+        let char = chars.pop();
+        socialCircles["rightCircle"].characters[char.name] = char;
+    }
+
+
+    // socialCircles["leftCircle"].characters[0] = chars.pop();
+    // socialCircles["leftCircle"].characters[1] = chars.pop();
+    // socialCircles["leftCircle"].characters[2] = chars.pop();
+    // socialCircles["middleCircle"].characters[0] = chars.pop();
+    // socialCircles["middleCircle"].characters[1] = chars.pop();
+    // socialCircles["middleCircle"].characters[2] = chars.pop();
+    // socialCircles["rightCircle"].characters[0] = chars.pop();
+    // socialCircles["rightCircle"].characters[1] = chars.pop();
+    // socialCircles["rightCircle"].characters[2] = chars.pop();
 }
 
 // Shuffles an array once
@@ -253,6 +269,7 @@ class UIObject{
 let selectedCircle = null;
 let startedGame = false;
 let points = 0;
+let currentRound = 1;
 
 
 
