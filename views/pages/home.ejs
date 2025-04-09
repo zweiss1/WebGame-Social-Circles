@@ -7,9 +7,29 @@
     <% if (user && darkMode) { %>
       <link rel="stylesheet" href="/css/styleDark.css">
     <% } %>
-    <script src="/public/js/home.js"></script>
+    <script src="/js/home.js" defer="defer"></script>
   </head>
   <body>
+
+    <!-- HIDDEN IMAGES FOR GAME UI -->
+    <!-- We'll need to be able to render the character images in the game. To do that, we
+      can load them into the DOM by putting them in a hidden div. This way, they get
+      processed and can be referenced in home.js. -->
+      <div id="characterImageStorage" style="display: none;">
+        <!-- characterImages should be an array of strings which are the paths to the images -->
+        <% for (let i = 0; i < characterImages.length; i++){ %>
+            <img src="<%-characterImages[i]%>">
+        <% } %>
+    </div>
+    <div id="uiImageStorage" style="display: none;">
+        <!-- UIImages should be an array of strings which are the paths to the images -->
+        <% for (let i = 0; i < uiImages.length; i++){ %>
+            <img src="<%-uiImages[i]%>">
+        <% } %>
+    </div>
+
+
+
     <header>
       <h1>SOCIAL CIRCLES</h1>
       <img id="profileButton" src="https://m.media-amazon.com/images/M/MV5BMzgzMzY2MmMtMWNkNy00ZjVkLWIxOWUtZDJjODNmY2IyOWFiXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" width="100" height="100">

@@ -17,6 +17,8 @@ router.get('/register', (req, res) => {
 });
 
 
+
+
 router.get('/guest', (req, res) => {
   req.session.user = null;
   req.session.save((err) => {
@@ -205,6 +207,32 @@ router.get('/home', checkActive, (req, res) => {
     LIMIT 10
   `;
 
+  // Send the game images in the ejs so home.js can grab them
+  const characterImages = [ // Dynamically populate these arrays with the paths to every file in characters and GameUI
+    //"./images/characters/deadPeter.webp",
+    "./images/characters/chet.png",
+    "./images/characters/howard.png",
+    "./images/characters/harold.png",
+    "./images/characters/melissa.png",
+    "./images/characters/valerie.png",
+    "./images/characters/sharon.png",
+    "./images/characters/tyler.png",
+    "./images/characters/margot.png",
+    "./images/characters/henry.png"
+  ];
+  const uiImages = [
+    //"./images/GameUI/melon.webp",
+    "./images/GameUI/blueCircle.png", // social circle
+    "./images/GameUI/purpleCircle.png", // social circle highlight
+    "./images/GameUI/partybtn.png", //buttons
+    "./images/GameUI/rizzbtn.png",
+    "./images/GameUI/coalminebtn.png",
+    "./images/GameUI/startbtn.png",
+    "./images/GameUI/gray.webp" // gray filter for when buttons can't be clicked
+  ];
+
+
+
   connection.query(leaderboardSql, (err, leaderboardResults) => {
     if (err) {
       console.error('Error fetching leaderboard data:', err);
@@ -217,7 +245,11 @@ router.get('/home', checkActive, (req, res) => {
         leaderboardPlayers: leaderboardResults,
         yourRank: 'Not available',
         yourScore: 'Not available',
-        user: null
+        user: null,
+
+        // Render UI images
+        characterImages: characterImages,
+        uiImages: uiImages
       });
     }
     
@@ -271,7 +303,11 @@ router.get('/home', checkActive, (req, res) => {
           yourRank: yourRank || 'Not available',
           yourScore: yourScore || 'Not available',
           user: user,
-          friendLeaderboard: friendLeaderboardResults
+          friendLeaderboard: friendLeaderboardResults,
+
+          // Send game images
+          characterImages: characterImages,
+          uiImages: uiImages
         });
       });
     });
