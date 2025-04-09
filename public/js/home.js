@@ -259,13 +259,14 @@ class UIObject{
 
 let selectedCircle = null; // Which circle is highlighted. The selected social circle will recieve the action if one of the three action buttons (rizz, party, coalmine) is clicked
 let startedGame = false; // This is used to stop the user from being able to click game ui before the game has started
+let endedGame = false;
 
 const PT_INCREMENT = 10; // The amount by which score is modified per character. If a character recieves an action they like, your score will increase by PT_INCREMENT.
 const PT_DECREMENT = 4; // same as above, but for dislikes.
 let points = 0; // Tracks the number of points in the current game
 
-let currentRound = 1; // Starts at 1 and finishes after round 20.
-const MAXROUNDS = 20 // Max number of rounds, inclusive.
+let currentRound = 1; // Starts at 1 and finishes after round MAXROUNDS.
+const MAXROUNDS = 15; // Max number of rounds, inclusive.
 
 
 
@@ -296,8 +297,10 @@ function initializeUI(){
 }
 
 
-// Render all UIObjects in order of least to greatest Z-value
+// Clear the canvas and render all game UI
 function renderUI(){
+    clearCanvas();
+
     // Draw selection circle if a circle has been selected
     if (selectedCircle != null){
         UIObjects["selectionCircle"].draw();
@@ -318,20 +321,34 @@ function renderUI(){
         grayOut(UIObjects["coalminebtn"]);
         grayOut(UIObjects["rizzbtn"]);
     }
+
+    if (startedGame) renderPoints();
+}
+
+// Renders points as text. Called in renderUI.
+function renderPoints(){
+    context.font = "20px Roboto Slab";
+    context.fillText("Points: " + points, 15, 15, 300);
+}
+
+// For starting a new game in the same session
+function resetGame(){
+    startedGame = true;
+    points = 0;
+    endedGame = false;
+    currentRound = 1;
+    shuffleCharacters();
+    renderUI();
 }
 
 function startGame(){
     startedGame = true;
-    clearCanvas();
     points = 0;
     renderUI();
 }
 
 // Either starts the next round or ends the game depending on the round number
 function nextRound(){
-    // do score stuff?
-    console.log("You have " + points + " points.");
-
     if (currentRound < MAXROUNDS){ // Go to the next round if that wasn't the last round
         currentRound += 1;
         shuffleCharacters();
@@ -339,6 +356,7 @@ function nextRound(){
     }
     else {
         // Otherwise, end the game
+        renderUI(); // still need to render so they can see the points they got
         endGame();
     }
 }
@@ -346,7 +364,6 @@ function nextRound(){
 
 // Does the selected action to the selected social circle, and then adds the points gained this round to your score before starting the next round or ending the game
 function onButtonClicked(btn){
-    console.log(btn.action);
     points += calculatePoints(getSocialCircle(selectedCircle), btn.action);
     nextRound();
 }
@@ -365,8 +382,20 @@ function calculatePoints(targetCircle, action){
 // Check if the score of the game is a new high score, prepare the game to be reset, display UI showing the game is over with the score (fade out?)
 function endGame(){
     console.log("ended game.");
+    endedGame = true;
+    printRestart();
 }
 
+// Print out a "restart game?" message
+function printRestart(){
+    grayOut(null); // gray out the canvas
+    context.font = "50px Roboto Slab";
+    context.fillText("Game Complete!", 175, 200);
+    context.fillText("Final Score: " + points, 200, 250);
+
+    context.font = "35px Roboto Slab";
+    context.fillText("(Click to restart)", 240, 400);
+}
 
 
 // Callback for when a social circle is clicked
@@ -497,6 +526,11 @@ function onCanvasClicked(event){
         return;
     }
 
+    // if the game is over, reset it
+    if (endedGame){
+        resetGame();
+        return;
+    }
 
     //Get the position of the mouse click relative to the canvas (rather than the page)
     let x = event.x - canvas.getBoundingClientRect().x; // absolute pos of mouse click - absolute pos of canvas = pos of mouse relative to canvas
@@ -568,4 +602,6 @@ function onDOMLoaded(event){
 
     // Now, we can gray out the screen until they click the canvas to start the game
     grayOut(null);
+    context.font = "50px Roboto Slab";
+    context.fillText("Click to begin!", 200, 260);
 }
