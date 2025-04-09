@@ -138,16 +138,7 @@ function shuffleCharacters(){
         socialCircles["rightCircle"].characters[char.name] = char;
     }
 
-
-    // socialCircles["leftCircle"].characters[0] = chars.pop();
-    // socialCircles["leftCircle"].characters[1] = chars.pop();
-    // socialCircles["leftCircle"].characters[2] = chars.pop();
-    // socialCircles["middleCircle"].characters[0] = chars.pop();
-    // socialCircles["middleCircle"].characters[1] = chars.pop();
-    // socialCircles["middleCircle"].characters[2] = chars.pop();
-    // socialCircles["rightCircle"].characters[0] = chars.pop();
-    // socialCircles["rightCircle"].characters[1] = chars.pop();
-    // socialCircles["rightCircle"].characters[2] = chars.pop();
+    // Don't forget to call renderUI() after shuffling the characters!
 }
 
 // Shuffles an array once
@@ -266,10 +257,15 @@ class UIObject{
 
 // CANVAS LOGIC
 
-let selectedCircle = null;
-let startedGame = false;
-let points = 0;
-let currentRound = 1;
+let selectedCircle = null; // Which circle is highlighted. The selected social circle will recieve the action if one of the three action buttons (rizz, party, coalmine) is clicked
+let startedGame = false; // This is used to stop the user from being able to click game ui before the game has started
+
+const PT_INCREMENT = 10; // The amount by which score is modified per character. If a character recieves an action they like, your score will increase by PT_INCREMENT.
+const PT_DECREMENT = 4; // same as above, but for dislikes.
+let points = 0; // Tracks the number of points in the current game
+
+let currentRound = 1; // Starts at 1 and finishes after round 20.
+const MAXROUNDS = 20 // Max number of rounds, inclusive.
 
 
 
@@ -287,10 +283,16 @@ function initializeUI(){
     //the background that renders behind the selected circle (draw this as mainCircle.x - 5 and mainCircle.y - 5 since it's wider and taller.)
     UIObjects["selectionCircle"] = new UIObject("selectionCircle", UIImages["purpleCircle"], 0, 0, 1, 260, 260, true, false, () => {});
 
+
     // buttons should be centered with the circles, but 40 pixels thinner
-    UIObjects["partybtn"] = new UIObject("partybtn", UIImages["partybtn"], 20, 440, 3, 192, 40, false, false, () => {console.log("Party!");});
-    UIObjects["rizzbtn"] = new UIObject("rizzbtn", UIImages["rizzbtn"], 252, 440, 3, 192, 40, false, false, () => {console.log("Rizz!");});
-    UIObjects["coalminebtn"] = new UIObject("coalminebtn", UIImages["coalminebtn"], 484, 440, 3, 192, 40, false, false, () => {console.log("Coal Mine!");});
+    UIObjects["partybtn"] = new UIObject("partybtn", UIImages["partybtn"], 20, 440, 3, 192, 40, false, false, () => {onButtonClicked(UIObjects["partybtn"]);});
+    UIObjects["rizzbtn"] = new UIObject("rizzbtn", UIImages["rizzbtn"], 252, 440, 3, 192, 40, false, false, () => {onButtonClicked(UIObjects["rizzbtn"]);});
+    UIObjects["coalminebtn"] = new UIObject("coalminebtn", UIImages["coalminebtn"], 484, 440, 3, 192, 40, false, false, () => {onButtonClicked(UIObjects["coalminebtn"]);});
+
+    // Associate an action with the action buttons, to make it easier to score moves
+    UIObjects["partybtn"].action = ACTIONS.INVITE;
+    UIObjects["rizzbtn"].action = ACTIONS.RIZZUP;
+    UIObjects["coalminebtn"].action = ACTIONS.COALMINE;
 }
 
 
@@ -325,6 +327,48 @@ function startGame(){
     renderUI();
 }
 
+// Either starts the next round or ends the game depending on the round number
+function nextRound(){
+    // do score stuff?
+    console.log("You have " + points + " points.");
+
+    if (currentRound < MAXROUNDS){ // Go to the next round if that wasn't the last round
+        currentRound += 1;
+        shuffleCharacters();
+        renderUI();
+    }
+    else {
+        // Otherwise, end the game
+        endGame();
+    }
+}
+
+
+// Does the selected action to the selected social circle, and then adds the points gained this round to your score before starting the next round or ending the game
+function onButtonClicked(btn){
+    console.log(btn.action);
+    points += calculatePoints(getSocialCircle(selectedCircle), btn.action);
+    nextRound();
+}
+
+// Calculates and returns the number of points an action will grant.
+function calculatePoints(targetCircle, action){
+    let pts = 0;
+    Object.values(targetCircle.characters).forEach((char) => {
+        if (char.like == action) pts += PT_INCREMENT;
+        if (char.dislike == action) pts -= PT_DECREMENT; // probably won't need to check for a dislike if they already like an action, but better safe than sorry
+    });
+
+    return pts;
+}
+
+// Check if the score of the game is a new high score, prepare the game to be reset, display UI showing the game is over with the score (fade out?)
+function endGame(){
+    console.log("ended game.");
+}
+
+
+
 // Callback for when a social circle is clicked
 function onCircleClicked(){
     // if this circle is already selected, deselect it. Otherwise, select it.
@@ -341,6 +385,21 @@ function onCircleClicked(){
     // Render UI
     clearCanvas();
     renderUI();
+}
+
+// Given a UIObject representing a social circle, return the social circle that represents that object.
+// This is to be used to figure out which Social Circle selectedCircle is, because I don't want to refactor 
+// all of the functions built on selectedCircle's UIObject type
+function getSocialCircle(uiCircle){
+    let circles = Object.values(socialCircles);
+    for (let i = 0; i < circles.length; i++){
+        if (circles[i].ui == uiCircle){
+            return circles[i];
+        }
+    }
+
+    // This shouldn't be possible, but just in case...
+    console.error("Searching for a social circle that doesn't exist???");
 }
 
 function clearCanvas(){
