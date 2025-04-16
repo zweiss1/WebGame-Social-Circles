@@ -17,7 +17,9 @@ router.get('/register', (req, res) => {
 });
 
 
-
+router.get('/characters', (req, res) =>{
+  res.render('pages/characters');
+});
 
 router.get('/guest', (req, res) => {
   req.session.user = null;
