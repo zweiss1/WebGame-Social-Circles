@@ -1,8 +1,6 @@
 html, body {
-    /* background-color: bisque; */
     background-color: #CFC5B0;
-    font-family: 'Roboto';
-    font-size: 22px;
+    font-family: 'Roboto Slab';
 }
 
 h1 {
@@ -71,30 +69,73 @@ a {
     color: black;
 }
 
+
+.leaderb-header {
+    font-size: 60px;
+    margin-top: 25px;
+    margin-bottom: 50px;
+    text-align: center;
+}
+
+
 .leaderb-layout {
     display: grid;
-    grid-template-columns: 30vw 30vw 39vw;
-    margin-left: 10px;
+    grid-template-columns: 30vw 30vw 40vw;
 }
 
 .leaderb-container {
     background-color: #D9D9D9;
     justify-self: center;
+    display: flex;
+    flex-direction: column;
     width: 20vw;
     height: 80vh;
     border-radius: 12px;
 }
 
-.leaderb-body {
+.leaderb-title {
+    font-size: 60px;
+    margin-top:20px;
+    text-align: center;
+    flex:1;
+}
+
+.leaderb-list {
+    flex:12;
     display: flex;
     flex-direction: column;
+    font-size: 24px;
+    font-weight: 600;
     margin: 0 15px;
 }
 
 .leaderb-entry {
     display: flex;
-    justify-content: space-between;
-    margin: 0 25px;
+    flex-direction: row;
+}
+
+.leaderb-name {
+    flex: 6;
+    overflow:hidden;
+}
+
+.leaderb-score {
+    text-align: center;
+    flex: 3;
+}
+
+.leaderb-user {
+    flex: 1;
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0 15px;
+    padding-left: 15px;
+}
+
+.leaderb-rank {
+    flex: 1;
+    padding-right: 2px;
+
 }
 
 .friend-container {

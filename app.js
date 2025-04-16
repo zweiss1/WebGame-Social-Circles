@@ -3,26 +3,14 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 
-// Database connection
 const pool = require('./database');
 
-// EJS Configuration
 app.set('view engine', 'ejs');
 app.set('views', './views'); 
-
-// Middleware
+app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static('public')); 
 
-// Title middleware
-app.use((req, res, next) => {
-    res.locals.getTitle = (pageTitle) => {
-      return pageTitle ? `${pageTitle} | Chase's Recipe Site` : "Chase's Recipe Site";
-    };
-    next();
-});
 
-// Routes
 const indexRouter = require('./routes/index');
 const leaderboardRouter = require('./routes/leaderboard');
 
@@ -30,7 +18,6 @@ app.use('/', indexRouter);
 app.use('/leaderboard', leaderboardRouter);
 
 
-// Basic error handling
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send('Something broke!');
