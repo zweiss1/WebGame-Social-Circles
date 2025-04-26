@@ -178,13 +178,13 @@ class SocialCircle{
 
         // create positions to draw the characters at inside of the circle. They should make a triangle.
         arr[0].ui.x = (this.ui.centerX - (this.ui.width / 4)) - (arr[0].ui.width / 2);
-        arr[0].ui.y = (this.ui.centerY + (this.ui.height / 4)) - (arr[0].ui.height / 2);
+        arr[0].ui.y = (this.ui.centerY + (this.ui.height / 4)) - (arr[0].ui.height / 1.2);
 
         arr[1].ui.x = this.ui.centerX - (arr[1].ui.width / 2);
-        arr[1].ui.y = (this.ui.centerY - (this.ui.height / 4)) - (arr[1].ui.height / 2);
+        arr[1].ui.y = (this.ui.centerY - (this.ui.height / 4)) - (arr[1].ui.height / 1.2);
 
         arr[2].ui.x = (this.ui.centerX + (this.ui.width / 4)) - (arr[2].ui.width / 2);
-        arr[2].ui.y = (this.ui.centerY + (this.ui.height / 4)) - (arr[2].ui.height / 2);
+        arr[2].ui.y = (this.ui.centerY + (this.ui.height / 4)) - (arr[2].ui.height / 1.2);
 
         // Now we draw the characters using the default values
         arr[0].ui.draw(undefined, undefined, undefined, undefined);
@@ -381,7 +381,7 @@ function calculatePoints(targetCircle, action){
 
 // Check if the score of the game is a new high score, prepare the game to be reset, display UI showing the game is over with the score (fade out?)
 function endGame(){
-    console.log("ended game.");
+    //TODO: Show a button that restarts the game instead of making it so you can click anywhere
     endedGame = true;
     printRestart();
 }
