@@ -268,6 +268,8 @@ let points = 0; // Tracks the number of points in the current game
 let currentRound = 1; // Starts at 1 and finishes after round MAXROUNDS.
 const MAXROUNDS = 15; // Max number of rounds, inclusive.
 
+let canClick = true;
+
 
 
 // TODO: Add button logic, add rounds, points, games, high score, merge with other branches.
@@ -334,6 +336,26 @@ function renderPoints(){
     context.fillStyle = prevStyle;
 }
 
+// Covers the game in a black screen with the text ROUND X OF Y
+function newRoundScreen(){
+    // Draw the box
+    let lastStyle = context.fillStyle;
+    context.fillStyle = "black";
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // Draw the text
+    let lastFont = context.font;
+    let lastColor = context.fillColor;
+    context.fillStyle = "white";
+    context.font = "80px Roboto Slab";
+    context.fillText(`Round ${currentRound} of ${MAXROUNDS}`, 120, 240);
+    context.fillStyle = lastStyle;
+    context.fillColor = lastColor;
+    context.font = lastFont;
+}
+
+
+
 // For starting a new game in the same session
 function resetGame(){
     startedGame = true;
@@ -350,12 +372,19 @@ function startGame(){
     renderUI();
 }
 
+
 // Either starts the next round or ends the game depending on the round number
 function nextRound(){
     if (currentRound < MAXROUNDS){ // Go to the next round if that wasn't the last round
         currentRound += 1;
-        shuffleCharacters();
-        renderUI();
+
+        canClick = false;
+        newRoundScreen();
+        setTimeout(() => {
+            shuffleCharacters();
+            renderUI();
+            canClick = true;
+        }, 800);
     }
     else {
         // Otherwise, end the game
@@ -368,7 +397,19 @@ function nextRound(){
 // Does the selected action to the selected social circle, and then adds the points gained this round to your score before starting the next round or ending the game
 function onButtonClicked(btn){
     points += calculatePoints(getSocialCircle(selectedCircle), btn.action);
-    nextRound();
+    switch (btn.action){
+        case ACTIONS.COALMINE:
+            context.drawImage(UIImages["coalminebtnselect"], btn.x, btn.y, btn.width, btn.height);
+            break;
+        case ACTIONS.RIZZUP:
+            context.drawImage(UIImages["rizzbtnselect"], btn.x, btn.y, btn.width, btn.height);
+            break;
+        case ACTIONS.INVITE:
+            context.drawImage(UIImages["partybtnselect"], btn.x, btn.y, btn.width, btn.height);
+            break;
+    }
+
+    setTimeout(nextRound, 100);
 }
 
 // Calculates and returns the number of points an action will grant.
@@ -549,6 +590,11 @@ function onCanvasClicked(event){
         return;
     }
 
+    // If the user isn't allowed to click any UI, don't let them
+    if (!canClick){
+        return;
+    }
+
     //Get the position of the mouse click relative to the canvas (rather than the page)
     let x = event.x - canvas.getBoundingClientRect().x; // absolute pos of mouse click - absolute pos of canvas = pos of mouse relative to canvas
     let y = event.y - canvas.getBoundingClientRect().y;
@@ -566,7 +612,6 @@ function onCanvasClicked(event){
     }
 
 }
-
 
 
 

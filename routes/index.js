@@ -230,6 +230,9 @@ router.get('/home', checkActive, (req, res) => {
     "./images/GameUI/rizzbtn.png",
     "./images/GameUI/coalminebtn.png",
     "./images/GameUI/startbtn.png",
+    "./images/GameUI/partybtnselect.png", // Highlighting for clicked buttons
+    "./images/GameUI/rizzbtnselect.png",
+    "./images/GameUI/coalminebtnselect.png",
     "./images/GameUI/gray.webp", // gray filter for when buttons can't be clicked
     "./images/GameUI/orange.png" // Orange filter, used the same way as gray
   ];
