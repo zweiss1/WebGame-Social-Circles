@@ -556,6 +556,39 @@ function onCanvasClicked(event){
 
 
 
+// UPDATING HIGHSCORE WITH SERVER
+async function sendScore(score){
+
+    //TODO: CHANGE THIS URL ONCE IT'S DEPLOYED
+    //const url = "https://drhorn.online/score";
+    const url = "http://localhost:3000/score";
+    console.log("Sending score: " + score);
+    try{
+        const response = await fetch(url, {
+            method: "POST",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body: JSON.stringify({score: score})
+        });
+
+        // Check if there was an issue getting the request
+        if (!response.ok){
+            throw new Error(`Response status: ${response.status}`);
+        }
+        
+        // Get the json from the response
+        const json = await response.json();
+
+        console.log(json);
+    } catch(error){
+        console.error(error);
+    }
+}
+
+
+
+
 
 
 

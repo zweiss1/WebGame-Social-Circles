@@ -12,6 +12,8 @@ app.set('views', './views');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public')); 
 
+app.use(express.json());
+
 //Setting up a session to get user data
 app.use(session({
   secret: process.env.SESSION_SECRET,
