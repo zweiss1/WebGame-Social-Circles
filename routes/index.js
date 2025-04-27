@@ -230,7 +230,8 @@ router.get('/home', checkActive, (req, res) => {
     "./images/GameUI/rizzbtn.png",
     "./images/GameUI/coalminebtn.png",
     "./images/GameUI/startbtn.png",
-    "./images/GameUI/gray.webp" // gray filter for when buttons can't be clicked
+    "./images/GameUI/gray.webp", // gray filter for when buttons can't be clicked
+    "./images/GameUI/orange.png" // Orange filter, used the same way as gray
   ];
 
 
@@ -428,14 +429,11 @@ function checkActive(req, res, next) {
   });
 }
 
-
+//Recieves scores from clients every time they finish a game. If the new score is higher than their high score, their high score is updated.
 router.post('/score', (req, res) => {
   if (!req.session.user) {
     return res.status(401).send("Unauthorized");
   }
-  console.log("received a score from user: " + req.session.user);
-  console.log(req.body);
-
   // Update the user's high score if the new score is higher
   connection.query(`UPDATE user_information SET highscore = ${req.body.score} WHERE username = "${req.session.user}" AND highscore < ${req.body.score}`, (err, result) => {
     
@@ -444,8 +442,6 @@ router.post('/score', (req, res) => {
     }
 
     else{
-      console.log("Rows changed: " + result.affectedRows);
-
       // Send the client a json that stores the new high score if it was updated and is empty if otherwise
       responseJSON = {}
 
@@ -453,7 +449,7 @@ router.post('/score', (req, res) => {
         responseJSON["newHighScore"] = req.body.score;
       }
 
-      res.json(responseJSON);
+      res.json(responseJSON); // I'm sending back the new high score, but currently the client doesn't update its leaderboard when it recieves a new high score. This is because the organization of the leaderboard is done when rendering home.ejs, and it would be annoying to reload the page or write a bunch of code to manually reorder the leaderboard. Maintenance team, you guys can implement this if you want.
     }
   });
 });

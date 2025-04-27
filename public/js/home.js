@@ -327,8 +327,11 @@ function renderUI(){
 
 // Renders points as text. Called in renderUI.
 function renderPoints(){
+    let prevStyle = context.fillStyle;
     context.font = "20px Roboto Slab";
+    context.fillStyle = "white";
     context.fillText("Points: " + points, 15, 15, 300);
+    context.fillStyle = prevStyle;
 }
 
 // For starting a new game in the same session
@@ -383,14 +386,15 @@ function calculatePoints(targetCircle, action){
 function endGame(){
     //TODO: Show a button that restarts the game instead of making it so you can click anywhere
     endedGame = true;
+    sendScore(points);
     printRestart();
 }
 
 // Print out a "restart game?" message
 function printRestart(){
-    grayOut(null); // gray out the canvas
+    orangeOut(null); // gray out the canvas
     context.font = "50px Roboto Slab";
-    context.fillText("Game Complete!", 175, 200);
+    context.fillText("Game Complete!", 183, 200);
     context.fillText("Final Score: " + points, 200, 250);
 
     context.font = "35px Roboto Slab";
@@ -445,6 +449,19 @@ function grayOut(uiObject){
     }
     context.globalAlpha = 0.8;
     context.drawImage(UIImages["gray"], uiObject.x, uiObject.y, uiObject.width, uiObject.height);
+    context.globalAlpha = 1;
+}
+
+//Same as gray out but orange.
+function orangeOut(uiObject){
+    if (uiObject == null){
+        context.globalAlpha = 0.8;
+        context.drawImage(UIImages["orange"], -20, -20, canvas.width * 1.5, canvas.height * 1.5);
+        context.globalAlpha = 1;
+        return;
+    }
+    context.globalAlpha = 0.8;
+    context.drawImage(UIImages["orange"], uiObject.x, uiObject.y, uiObject.width - 50, uiObject.height - 50);
     context.globalAlpha = 1;
 }
 
@@ -556,8 +573,10 @@ function onCanvasClicked(event){
 
 
 
+
+
 // UPDATING HIGHSCORE WITH SERVER
-async function sendScore(score){
+async function sendScore(score){ // This can be called from the console, meaning anyone can increase their high score manually. If anti-cheating measures were in our requirements, this would be a problem.
 
     //TODO: CHANGE THIS URL ONCE IT'S DEPLOYED
     //const url = "https://drhorn.online/score";
@@ -581,6 +600,18 @@ async function sendScore(score){
         const json = await response.json();
 
         console.log(json);
+        if (json["newHighScore"]){
+            let prevStyle = context.fillStyle; // So I can set it to whatever it was before I changed it to red
+            context.font = "50px Roboto Slab";
+            context.fillStyle = "red";
+            context.fillText("New high score!", 200, 300);
+
+            context.strokeStyle = "white";
+            context.strokeText("New high score!", 200, 300);
+
+            context.fillStyle = prevStyle;
+        }
+
     } catch(error){
         console.error(error);
     }
@@ -634,7 +665,8 @@ function onDOMLoaded(event){
     renderUI();
 
     // Now, we can gray out the screen until they click the canvas to start the game
-    grayOut(null);
+    orangeOut(null);
     context.font = "50px Roboto Slab";
+    context.fillStyle = "black";
     context.fillText("Click to begin!", 200, 260);
 }
