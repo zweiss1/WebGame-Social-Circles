@@ -435,7 +435,8 @@ function checkActive(req, res, next) {
 //Recieves scores from clients every time they finish a game. If the new score is higher than their high score, their high score is updated.
 router.post('/score', (req, res) => {
   if (!req.session.user) {
-    return res.status(401).send("Unauthorized");
+    //return res.status(401).send("Unauthorized");
+    return res.json({}); // Send back nothing because they aren't signed in. Ideally, if a user wasn't signed in, the client wouldn't be sending scores at all. Maintenance team, you can fix this if you want.
   }
   // Update the user's high score if the new score is higher
   connection.query(`UPDATE user_information SET highscore = ${req.body.score} WHERE username = "${req.session.user}" AND highscore < ${req.body.score}`, (err, result) => {

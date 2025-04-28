@@ -19,7 +19,7 @@ const socialCircles = {};
 
 // EVENT LISTENERS
 
-canvas.addEventListener("click", onCanvasClicked); // onCanvasClicked will process the click event and call different functions based on where you clicked. It's like a router for clicks!
+canvas.addEventListener("mousedown", onCanvasClicked); // onCanvasClicked will process the click event and call different functions based on where you clicked. It's like a router for clicks!
 
 
 
@@ -332,7 +332,7 @@ function renderPoints(){
     let prevStyle = context.fillStyle;
     context.font = "20px Roboto Slab";
     context.fillStyle = "white";
-    context.fillText("Points: " + points, 15, 15, 300);
+    context.fillText("Points: " + points, 15, 25, 300);
     context.fillStyle = prevStyle;
 }
 
@@ -376,7 +376,8 @@ function startGame(){
 // Either starts the next round or ends the game depending on the round number
 function nextRound(){
     if (currentRound < MAXROUNDS){ // Go to the next round if that wasn't the last round
-        currentRound += 1;
+        selectedCircle = null; // Make sure we don't start the next round with a circle selected
+        currentRound += 1; // Increment the round number
 
         canClick = false;
         newRoundScreen();
@@ -626,7 +627,7 @@ async function sendScore(score){ // This can be called from the console, meaning
     //TODO: CHANGE THIS URL ONCE IT'S DEPLOYED
     //const url = "https://drhorn.online/score";
     const url = "http://localhost:3000/score";
-    console.log("Sending score: " + score);
+
     try{
         const response = await fetch(url, {
             method: "POST",
@@ -644,7 +645,6 @@ async function sendScore(score){ // This can be called from the console, meaning
         // Get the json from the response
         const json = await response.json();
 
-        console.log(json);
         if (json["newHighScore"]){
             let prevStyle = context.fillStyle; // So I can set it to whatever it was before I changed it to red
             context.font = "50px Roboto Slab";
