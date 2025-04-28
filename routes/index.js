@@ -29,12 +29,12 @@ router.get('/logout', (req, res) => {
 });
 
 
-router.get('/characters', (req, res) =>{
+router.get('/characters', checkActive, (req, res) =>{
   const user = req.session.user;
   res.render('pages/characters', {user: user});
 });
 
-router.get('/leaderboard', (req, res) =>{
+router.get('/leaderboard', checkActive, (req, res) =>{
   const user = req.session.user;
   // Querying all scores
   const leaderboardSql = `
