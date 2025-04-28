@@ -48,7 +48,7 @@ function requireAdmin(req, res, next) {
                 conn.commit(err => {
                   if (err) return rollback(err);
                   conn.release();
-                  return res.json({ ok: true, message: `User ${user} removed` });
+                  return res.json({ ok: true, message: `Users removed: ${result.affectedRows}` });
                 });
               }
             );
