@@ -1,0 +1,38 @@
+<%- include('../partials/header') %>
+    <body>
+        <h1 class="header-title">SOCIAL CIRCLES</h1>
+
+        <div class="leaderboard-layout">
+            <div class="leaderboard-container">
+                <h1 class="leaderboard-title">Leaderboard</h1>
+                <ol class="leaderboard-list">
+                    <%allScores.forEach((player)=>{%>
+                        <li>
+                            <div class="<%=user && user===player.name ? 'leaderboard-user' : 'leaderboard-entry'%>">
+                                <span><%= player.name %></span>
+                  
+                                <span><%= player.score %></span>
+                            </div>
+                        </li>
+                    <%})%>
+                </ol>
+            </div>
+            <% if(user) {%>
+                <div class="leaderboard-container">
+                    <h2 class="leaderboard-title">Friends</h2>
+                    <ol class="leaderboard-list">
+                        <%friendScores.forEach((player)=>{%>
+                            <li>
+                                <div class="<%=user && user===player.name ? 'leaderboard-user' : 'leaderboard-entry'%>">
+                                    <span><%= player.name %></span>
+                      
+                                    <span><%= player.score %></span>
+                                </div>
+                            </li>
+                        <%})%>
+                    </ol>
+                </div>
+            <% } %>    
+        </div>
+    </body>
+</html>
