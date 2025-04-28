@@ -4,16 +4,16 @@ window.addEventListener("load", onDOMLoaded); // Interestingly, the event type "
 // DOM REFERENCES
 const canvas = document.getElementById("gameCanvas"); // game canvas
 const context = canvas.getContext("2d"); // graphics context of game canvas
+const isDarkMode = document.getElementById("darkcss") ? true : false;
 
 const characterImageHolder = document.getElementById("characterImageStorage"); // hidden div in which images are loaded so we can use them here. I'm using it so I can render images from the server on the canvas.
 const uiImageHolder = document.getElementById("uiImageStorage"); // same as characterImageHolder but for ui images
 
+// UI
 const characterImages = {}; //stores images for the game characters, to be rendered on the canvas
 const characters = {};
-
 const UIObjects = {}; // stores all of the buttons and interactive elements in the UI (except for the characters), so we can route clicks to them
 const UIImages = {};
-
 const socialCircles = {};
 
 
@@ -264,6 +264,7 @@ let endedGame = false;
 const PT_INCREMENT = 10; // The amount by which score is modified per character. If a character recieves an action they like, your score will increase by PT_INCREMENT.
 const PT_DECREMENT = 4; // same as above, but for dislikes.
 let points = 0; // Tracks the number of points in the current game
+let prevPoints = 0; // Tracks the number of points you had in the previous round
 
 let currentRound = 1; // Starts at 1 and finishes after round MAXROUNDS.
 const MAXROUNDS = 15; // Max number of rounds, inclusive.
@@ -331,7 +332,10 @@ function renderUI(){
 function renderPoints(){
     let prevStyle = context.fillStyle;
     context.font = "20px Roboto Slab";
-    context.fillStyle = "white";
+
+    if (isDarkMode) context.fillStyle = "white";
+    else context.fillStyle = "black";
+
     context.fillText("Points: " + points, 15, 25, 300);
     context.fillStyle = prevStyle;
 }
@@ -349,6 +353,12 @@ function newRoundScreen(){
     context.fillStyle = "white";
     context.font = "80px Roboto Slab";
     context.fillText(`Round ${currentRound} of ${MAXROUNDS}`, 120, 240);
+
+    // We'll also show how many points they earned that round
+    context.font = "20px Roboto Slab";
+    if (points - prevPoints >= 0) context.fillText(`+${points - prevPoints} points!`, 300, 320);
+    else context.fillText(`${points - prevPoints} points...`, 300, 320);
+
     context.fillStyle = lastStyle;
     context.fillColor = lastColor;
     context.font = lastFont;
@@ -381,6 +391,7 @@ function nextRound(){
 
         canClick = false;
         newRoundScreen();
+        prevPoints = points;
         setTimeout(() => {
             shuffleCharacters();
             renderUI();
