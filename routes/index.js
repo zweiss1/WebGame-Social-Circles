@@ -18,9 +18,67 @@ router.get('/register', (req, res) => {
   res.render('pages/signup');
 });
 
+router.get('/logout', (req, res) => {
+  req.session.destroy(err => {
+    if (err) {
+      console.error('Session destruction error:', err);
+      return res.status(500).send('Could not log out.');
+    }
+    res.redirect('/login');
+  });
+});
 
-router.get('/characters', checkActive, (req, res) => {
-  res.render('pages/characters', { user: req.session.user ?? null });
+
+router.get('/characters', (req, res) =>{
+  const user = req.session.user;
+  res.render('pages/characters', {user: user});
+});
+
+router.get('/leaderboard', (req, res) =>{
+  const user = req.session.user;
+  // Querying all scores
+  const leaderboardSql = `
+    SELECT username AS name, highscore AS score
+    FROM user_information
+    WHERE is_active = 1
+    ORDER BY highscore DESC
+  `;
+  connection.query(leaderboardSql, (err, leaderboardResults) => {
+    if (err) {
+      console.error('Error fetching leaderboard data:', err);
+      return res.status(500).send('Internal Server Error');
+    }
+    if (!user) {
+      return res.render('pages/leaderboard', {allScores: leaderboardResults, user: user});
+    }
+    
+
+    // Querying friend scores
+    connection.query(
+      `SELECT f.* 
+      FROM friendships f
+      JOIN user_information u1 ON f.username = u1.username AND u1.is_active = 1
+      JOIN user_information u2 ON f.friend_username = u2.username AND u2.is_active = 1
+      WHERE f.status = 'accepted' 
+        AND (f.username = ? OR f.friend_username = ?)`,
+      [user, user],
+      (err, friendsList) => {
+        if (err) return res.status(500).send(err);
+        if(friendsList.length===0){
+          return res.render('pages/leaderboard', {allScores: leaderboardResults, friendScores: [], user: user});
+        }
+      const friendUsernames = friendsList.map(f => (f.username === user ? f.friend_username : f.username));
+      connection.query(
+        `SELECT username AS name, highscore AS score 
+        FROM user_information
+        WHERE username IN (?) OR username=?
+        ORDER BY highscore DESC`,
+        [friendUsernames, user],
+        (err, friendResults) => {
+          res.render('pages/leaderboard', {allScores: leaderboardResults, friendScores: friendResults, user: user});
+        });
+    });
+  });
 });
 
 

@@ -3,6 +3,11 @@
   <head>
     <meta lang="en">
     <title>Social Circles</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Roboto+Slab:wght@100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet">
     <link rel="stylesheet" href="/css/style.css">
     <% if (user && darkMode) { %>
       <link id="darkcss" rel="stylesheet" href="/css/styleDark.css">
@@ -10,8 +15,8 @@
     <script src="/js/home.js" defer="defer"></script>
     <script src="./js/adminCommands.js"></script>
   </head>
-  <body>
 
+  <body>
     <!-- HIDDEN IMAGES FOR GAME UI -->
     <!-- We'll need to be able to render the character images in the game. To do that, we
       can load them into the DOM by putting them in a hidden div. This way, they get
@@ -22,6 +27,7 @@
             <img src="<%-characterImages[i]%>">
         <% } %>
     </div>
+
     <div id="uiImageStorage" style="display: none;">
         <!-- UIImages should be an array of strings which are the paths to the images -->
         <% for (let i = 0; i < uiImages.length; i++){ %>
@@ -29,59 +35,56 @@
         <% } %>
     </div>
 
-
-
     <header>
-      <h1>SOCIAL CIRCLES</h1>
-      <img id="profileButton" src="https://m.media-amazon.com/images/M/MV5BMzgzMzY2MmMtMWNkNy00ZjVkLWIxOWUtZDJjODNmY2IyOWFiXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" width="100" height="100">
+      
+      <h1 class="header-title">SOCIAL CIRCLES</h1>
+      
+      <div class="header-nav">
+        <a class="button" href="/logout">Logout</a>
+
+        <a class="button" href="/characters">Characters</a>
+
+        <a class="button" href="/leaderboard">Leaderboards</a>
+
+        <a class="<%= user ? 'button' : 'button-guest' %>" href="/account">Account Settings</a>
+      </div>
     </header>
+
     <main id="homeMain">
-      <canvas id="gameCanvas" width="700" height="500" style="border: 5px solid black;"></canvas>
-      <div id="leaderboardHolder">
-        <h2>Leaderboard</h2>
-        <ol>
-          <% for (let i = 0; i < leaderboardPlayers.length; i++) { %>
-            <li>
-              <span class="leaderboardName"><%= leaderboardPlayers[i].name %></span>
-              <span class="leaderboardScore"><%= leaderboardPlayers[i].score %></span>
-            </li>
-          <% } %>
-        </ol>
-        <% if (user) { %>
-          <div class="yourRank">
-            <h2>Your Rank: <%= yourRank %></h2>
-          </div>
-          <div class="yourScore"> <!--Shouldn't this be high score? Score is rendered in the game canvas-->
-            <h2>Your High Score: <%= yourScore %></h2>
-          </div>
-          <!-- Friend Leaderboard -->
-          <% if (friendLeaderboard.length > 0){ %>
-            <div class="friendLeaderboard">
-              <h2>Friend Leaderboard</h2>
-              <ol>
-                <% for (let i = 0; i < friendLeaderboard.length; i++) { %>
-                  <li>
-                    <span class="leaderboardName"><%= friendLeaderboard[i].name %></span>
-                    <span class="leaderboardScore"><%= friendLeaderboard[i].score %></span>
-                  </li>
-                <% } %>
-              </ol>
-            </div>
-          <% } %>
-        <% } %>  
+      <div id="home-container">
+        <canvas id="gameCanvas" width="700" height="500"></canvas>
+        
+        <div class="home-leaderboard">
+          <h1 class="leaderboard-title">Leaderboard</h1>
+          
+          <ol class="leaderboard-list">
+            <% leaderboardPlayers.forEach((player)=>{ %>
+              <li>
+                <div class="<%=user && user===player.name ? 'leaderboard-user' : 'leaderboard-entry'%>">
+                  <span class="leaderboard-text"><%= player.name %></span>
+                  
+                  <span class="leaderboard-text"><%= player.score %></span>
+                </div>
+              </li>
+            <% }) %>
+            
+            <% if (user && yourRank>10) { %>
+            <li value="<%= yourRank %>">
+                <div class="leaderboard-user">
+                  <span><%= user %></span>
+                  
+                  <span><%= yourScore %></span>
+                </div>
+              </li>
+            <% } %> 
+          </ol>  
+        </div>
       </div>
       
-      <a href="/characters">to character page</a>
+     
       
-      <!-- Only show account settings if a user is logged in -->
-      <% if (user) { %>
-        <div class="auth-actions">
-          <div>
-            <a href="/account">Account Settings</a>
-            <br>
-          </div>
-        </div>
-      <% } %>
+      
+      
       
     </main>
 

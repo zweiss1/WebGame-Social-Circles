@@ -1,65 +1,49 @@
-<!DOCTYPE html>
-<html lang="en">
+<%- include('../partials/header') %>
 
-<head>
-  <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
-  <meta charset="UTF-8" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Roboto+Slab:wght@100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
-    rel="stylesheet">
-  <link rel='stylesheet'
-    href='https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-straight/css/uicons-regular-straight.css'>
-  <title>Social Circles</title>
-  <link rel="stylesheet" href="/css/style.css">
-</head>
+  <body>
+    <h1 id="auth-header">WELCOME TO SOCIAL CIRCLES</h1>
 
-<body id="splashbody">
-
-  <h1 class="site-header">WELCOME TO SOCIAL CIRCLES</h1>
-  <div class="splashcontainer">
-
-    <div>
+    <div id="auth-body">
       <img id="logo" src="/images/logo.png" alt="Horn Studios Logo" />
+
+      <div id="auth-container">
+        <span id="auth-title">Sign up</span>
+
+        <form method="post" id="auth-form" action="/signup">
+          <label for="username" class="auth-subtitle">Username</label>
+          
+          <div class="auth-field">
+            <div class="auth-icon">
+              <i class="fi fi-rs-user"></i>
+            </div>
+            
+            <input type="text" name="username" class="auth-text" placeholder="Enter a username" />
+          </div>
+
+          <label for="password" class="auth-subtitle">Password</label>
+          
+          <div class="auth-field">
+            <div class="auth-icon">
+              <i class="fi fi-rs-lock"></i>
+            </div>
+            
+            <input type="password" name="password" class="auth-text" placeholder="Enter a password" />
+          </div>
+
+          <div id="auth-actions">
+            <div id="auth-switch">
+              <a href="/">Switch to Login</a>
+              
+              <span>or</span>
+              
+              <a href="/guest">Continue as guest</a>
+            </div>
+            
+            <input type="submit" id="auth-button" value="Signup" />
+          </div>
+
+        </form>
+      </div>
     </div>
-
-    <div class="auth-container">
-      <h2 class="auth-title">Sign up</h2>
-
-      <form method="post" action="/signup">
-
-        <label for="username">Username</label><br>
-        <div class="auth-field">
-          <div class="auth-icon">
-            <i class="fi fi-rs-user"></i>
-          </div>
-          <input type="text" id="username" class="auth-text" name="username"
-            placeholder="Enter a username" /><br><br>
-        </div>
-
-        <label for="password">Password</label><br>
-        <div class="auth-field">
-          <div class="auth-icon">
-            <i class="fi fi-rs-lock"></i>
-          </div>
-          <input type="password" id="password" name="password" placeholder="Enter a password" /><br><br>
-        </div>
-
-        <div class="auth-actions">
-          <div>
-            <a href="/">Login with account</a>
-            <br>
-            <span>or</span>
-            <br>
-            <a href="/guest">Continue as guest</a>
-          </div>
-          <input type="submit" class="auth-button" value="Signup" />
-        </div>
-
-      </form>
-    </div>
-  </div>
-</body>
-
+  </body>
 </html>

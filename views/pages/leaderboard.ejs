@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Roboto+Slab:wght@100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet">
+    <link rel='stylesheet'
+      href='https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-straight/css/uicons-regular-straight.css'>
+    <title>Social Circles</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <% if (user && darkMode) { %>
+      <link rel="stylesheet" href="/css/styleDark.css">
+    <% } %>
+  </head>
+    <body>
+        <div class="header-page">
+            <a href="/home" class="back-icon"><i class="fi fi-rs-arrow-left"></i></a>
+            
+            <h1 class="header-title">LEADERBOARDS</h1>
+          </div>
+
+        <div class="leaderboard-layout">
+            <div class="leaderboard-container">
+                <h1 class="leaderboard-title">Leaderboard</h1>
+                <ol class="leaderboard-list">
+                    <%allScores.forEach((player)=>{%>
+                        <li>
+                            <div class="<%=user && user===player.name ? 'leaderboard-user' : 'leaderboard-entry'%>">
+                                <span><%= player.name %></span>
+                  
+                                <span><%= player.score %></span>
+                            </div>
+                        </li>
+                    <%})%>
+                </ol>
+            </div>
+            <% if(user) {%>
+                <div class="leaderboard-container">
+                    <h2 class="leaderboard-title">Friends</h2>
+                    <ol class="leaderboard-list">
+                        <% if(friendScores.length!=0) { %>
+                            <% friendScores.forEach((player)=>{%>
+                                <li>
+                                    <div class="<%=user && user===player.name ? 'leaderboard-user' : 'leaderboard-entry'%>">
+                                        <span><%= player.name %></span>
+                        
+                                        <span><%= player.score %></span>
+                                    </div>
+                                </li>
+                            <%})%>
+                        <% } %>
+                    </ol>
+                </div>
+            <% } %>    
+        </div>
+    </body>
+</html>

@@ -56,7 +56,6 @@ app.post('/toggle-theme', (req, res) => {
         console.error('Toggle theme error:', err);
         return res.status(500).send('Error updating theme');
       }
-      // Redirect immediately; the middleware will fetch the new value on the next request
       res.redirect('/account');
     }
   );

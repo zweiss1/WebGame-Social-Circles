@@ -1,90 +1,247 @@
+/* UNIVERSIAL STYLING */
 html, body {
     background-color: #cfc5b0;
     font-family: 'Roboto Slab';
-}
-
-.splashcontainer {
-    display: grid;
-    grid-template-columns: 50vw 50vw;
-    margin-left: 45px;
-}
-
-.site-header {
-    font-size: 60px;
-    margin-top: 25px;
-    margin-left: 25px;
-    margin-bottom: 50px;
-}
-
-#logo {
-    width: 80%;
-}
-
-.auth-container {
-    margin-top:50px;
-    font-size: 50px;
-    font-weight: 500;
-}
-
-.auth-title {
-    font-size: 70px;
-    margin-top:20px;
-    margin-bottom:50px;
-}
-
-.auth-icon {
-    border-bottom: 3px solid black;
-    display: flex;
-    padding-right:15px;
-    margin-bottom: 70px;
-    
-}
-
-.auth-field {
-    width: 30vw;
-    padding-top:20px;
-    display: flex;
-}
-
-#password, #username {
-    border: none;
-    background: none;
-    outline: none;
-    font-family: 'Roboto Slab';
-    border-bottom: 3px solid black;
-    width: 20vw;
-    font-size: 34px;
-    margin-bottom:70px;
-}
-.auth-actions {
-    font-size:24px;
-    display: flex;
-    flex-direction: row;
-    text-align: center;
-    align-items: center;
-}
-
-.auth-button {
-    margin-left: 5vw;
-    height: 7vh;
-    width: 15vw;
-    border-radius: 12px;
-    border: none;
-    background-color: #cd9d59;
-    font-family: 'Roboto Slab';
-    font-weight: bold;
-    font-size: 50px;
-}
-
-.auth-button:hover {
-    cursor: pointer;
-    background-color: #bd9153;
 }
 
 a {
     color: black;
 }
 
+.header-page {
+    display: flex;
+    gap: 5rem;
+    margin-bottom:1.2rem;
+    margin-left: 1rem;
+}
+
+.header-title {
+    font-size: 3.5rem;
+    text-align: center;
+    margin:0;
+}
+
+.header-nav {
+    display: flex;
+    list-style-type: none;
+    justify-content: space-evenly;
+    margin-bottom: 2.5rem;
+}
+
+.back-icon {
+    font-size:2rem;
+    align-content: center;
+}
+
+.button {
+    border-radius: 12px;
+    border: none;
+    background-color: #cd9d59;
+    align-content: center;
+    font-size: 2rem;
+    font-weight: 500;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    transition: all 0.5s ease;
+    text-decoration: none;
+}
+
+.button:hover {
+    cursor: pointer;
+    background-color: #aa8550;
+}
+
+.button-guest {
+    pointer-events: none;
+    border-radius: 12px;
+    border: none;
+    background-color: #5f5e5c;
+    font-size: 2rem;
+    font-weight: 500;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    text-decoration: none;
+}
+
+
+
+
+
+/* LOGIN AND SIGNUP STYLING */
+#auth-header {
+    font-size: 2.5rem;
+    margin-left: 1.5rem; 
+}
+
+#auth-body {
+    display: grid;
+    grid-template-columns: 55vw 40vw;
+}
+
+#logo {
+    justify-self: center;
+}
+
+#auth-container {
+    display: flex;
+    flex-direction: column;
+    margin-top: 5rem;
+}
+
+#auth-title {
+    font-size: 3rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+#auth-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.auth-subtitle {
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.auth-icon {
+    padding-right: 1rem;
+    align-content: center;
+    font-size: 2rem;
+    border-bottom: 3px solid black;
+}
+
+.auth-field {
+    display: flex;
+    margin-bottom: 2rem;
+}
+
+.auth-text {
+    border: none;
+    background: none;
+    outline: none;
+    font-family: 'Roboto Slab';
+    border-bottom: 3px solid black;
+    font-size: 24px;
+}
+
+#auth-actions {
+    width: 70%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    text-align: center;
+}
+
+#auth-switch {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+#auth-button {
+    border-radius: 12px;
+    border: none;
+    background-color: #cd9d59;
+    font-family: 'Roboto Slab';
+    font-weight: 500;
+    font-size: 2rem;
+    width: 12rem;
+    transition: all 0.5s ease;
+}
+
+#auth-button:hover {
+    cursor: pointer;
+    background-color: #aa8550;
+}
+
+
+
+
+
+/* HOME STYLING */
+#home-container {
+    display: grid;
+    grid-template-columns: 65vw 24vw;
+}
+
+#gameCanvas {
+    border: 5px solid #cd9d59;
+    justify-self: center;
+}
+
+.home-leaderboard{
+    background-color: #D9D9D9;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    padding-left:1rem;
+}
+
+
+
+
+
+/* LEADERBOARD STYLING */
+.leaderboard-layout {
+    display: grid;
+    grid-template-columns: 24vw 24vw;
+    justify-content: space-evenly;
+}
+
+.leaderboard-container{
+    height:36rem;
+    background-color: #D9D9D9;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding-left:1rem;
+    padding-bottom:1rem;
+}
+
+.leaderboard-title {
+    color: black;
+    font-size: 2rem;
+    text-align: center;
+    margin: 0;
+    margin-top:1rem;
+    padding-right:1rem;
+}
+
+.leaderboard-list {
+    font-size:1.5rem;
+    font-weight: 500;
+    color: black;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    flex-grow: 1;
+    overflow-y: auto;
+    margin:0;
+    padding-top:1rem;
+    padding-bottom:1rem;
+}
+
+.leaderboard-entry {
+    display: flex;
+    width: 80%;
+    justify-content: space-between;   
+}
+
+.leaderboard-user {
+    color: #cd9d59;
+    display: flex;
+    width: 80%;
+    justify-content: space-between;    
+}
+
+
+
+
+
+/* CHARACTER STYLING */
 .character-list {
     display: flex;
     justify-content: center;
@@ -92,7 +249,7 @@ a {
 
 .carousel {
     width: 40vw;
-    height: 75vh;
+    height: 70vh;
     position: relative;
 }
 
@@ -104,15 +261,15 @@ a {
     position: absolute;
     inset: 0;
     opacity: 0;
-    transition: 200ms opacity ease-in-out;
     text-align: center;
+    transition: 200ms opacity ease-in-out;
 }
 
 .character-slide > img {
     display: block;
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    height: 90%;
+    object-fit:contain;
     object-position: center; 
 }
 
@@ -130,7 +287,6 @@ a {
     transform:translateY(-50%);
     cursor: pointer;
     border-radius: 0.25rem;
-    /* background-color: rgba(0, 0, 0, 0.1); */
 }
 
 .carousel-button:hover,
@@ -145,4 +301,28 @@ a {
 
 .carousel-button.next {
     right: 1rem;
+}
+
+
+
+
+
+/* ACCOUNT STYLING */
+.account-body {
+    margin-left: 3rem;
+}
+
+.account-button {
+    border-radius: 12px;
+    border: none;
+    background-color: #cd9d59;
+    align-content: center;
+    font-family: 'Roboto Slab';
+    font-size: 1rem;
+    font-weight: 500;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    transition: all 0.5s ease;
+    text-decoration: none;
+    margin-top: 0.5rem;
 }
