@@ -51,20 +51,22 @@
             <h2>Your Rank: <%= yourRank %></h2>
           </div>
           <div class="yourScore"> <!--Shouldn't this be high score? Score is rendered in the game canvas-->
-            <h2>Your Score: <%= yourScore %></h2>
+            <h2>Your High Score: <%= yourScore %></h2>
           </div>
           <!-- Friend Leaderboard -->
-          <div class="friendLeaderboard">
-            <h2>Friend Leaderboard</h2>
-            <ol>
-              <% for (let i = 0; i < friendLeaderboard.length; i++) { %>
-                <li>
-                  <span class="leaderboardName"><%= friendLeaderboard[i].name %></span>
-                  <span class="leaderboardScore"><%= friendLeaderboard[i].score %></span>
-                </li>
-              <% } %>
-            </ol>
-          </div>
+          <% if (friendLeaderboard.length > 0){ %>
+            <div class="friendLeaderboard">
+              <h2>Friend Leaderboard</h2>
+              <ol>
+                <% for (let i = 0; i < friendLeaderboard.length; i++) { %>
+                  <li>
+                    <span class="leaderboardName"><%= friendLeaderboard[i].name %></span>
+                    <span class="leaderboardScore"><%= friendLeaderboard[i].score %></span>
+                  </li>
+                <% } %>
+              </ol>
+            </div>
+          <% } %>
         <% } %>  
       </div>
       
