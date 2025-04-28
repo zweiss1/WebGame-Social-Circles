@@ -12,10 +12,7 @@ html, body {
     border-bottom: 1px solid #333;
   }
   
-  /* links */
-  a {
-    color: #bb86fc;
-  }
+
   
   /* buttons */
   .auth-button {
@@ -26,16 +23,30 @@ html, body {
     background-color: #444444;
   }
   
+  .back-icon {
+    font-size:2rem;
+    align-content: center;
+    color: #e0e0e0;
+  }
   /* canvas border */
   #gameCanvas {
     border: 5px solid #444444 !important;
   }
-  
-  /* leaderboard text */
-  .leaderboardName,
-  .leaderboardScore {
-    color: #e0e0e0;
-  }
+
+  /* character carousel button */
+  .carousel-button {
+    position: absolute;
+    background:none;
+    border:none;
+    font-size: 4rem;
+    top:50%;
+    z-index: 2;
+    transform:translateY(-50%);
+    cursor: pointer;
+    border-radius: 0.25rem;
+    color: #cd9d59;
+}
+
   
   /* form inputs, panels, etc… */
   input, select, textarea {

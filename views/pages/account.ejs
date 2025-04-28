@@ -1,105 +1,117 @@
-<%- include('../partials/header') %>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Roboto+Slab:wght@100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet">
+    <link rel='stylesheet'
+      href='https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-straight/css/uicons-regular-straight.css'>
+    <title>Social Circles</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <% if (user && darkMode) { %>
+      <link rel="stylesheet" href="/css/styleDark.css">
+    <% } %>
+  </head>
 
-<body>
-  <!-- Go back home -->
-  <section>
-    <u1>
-      <form method="get" action="/home">
-        <button type="submit">Return Home</button>
-      </form>
-    </u1>
-  </section>
+  <body>
+    <div class="header-page">
+      <a href="/home" class="back-icon"><i class="fi fi-rs-arrow-left"></i></a>
+      
+      <h1 class="header-title">ACCOUNT SETTINGS</h1>
+    </div>
 
+    <div class="account-body">
+      <!-- Add Friend Form -->
+      <div id="auth-container">
+        <form method="post" action="/add_friend">
+          <label for="username" class="auth-subtitle">Add Friends</label>
 
-  <header>
-    <h1>Account Settings</h1>
-  </header>
-  
-  <!-- Add Friend Form -->
-  <div class="auth-container">
-    <form method="post" action="/add_friend">
-      <label for="username">Add Friend</label><br>
-      <div class="auth-field">
-        <div class="auth-icon">
-          <i class="fi fi-rs-user"></i>
-        </div>
-        <input type="text" id="username" class="auth-text" name="username" placeholder="Enter the username" /><br><br>
+          <div class="auth-field">
+            <div class="auth-icon">
+              <i class="fi fi-rs-user"></i>
+            </div>
+            
+            <input type="text" name="username" class="auth-text" placeholder="Enter the username" />
+          </div>
+        </form>
       </div>
-    </form>
-  </div>
 
-  <!-- Friend Board -->
-  <section>
-    <h2>Your Friends</h2>
-    <ul>
-      <% if (friends.length > 0) { %>
-        <% friends.forEach(function(f) { %>
-          <li>
-            <% // Display the friend’s username (the one that is not the current user) %>
-            <% if (f.username === user) { %>
-              <span><%= f.friend_username %></span> 
-              <form method="post" action="/remove">
-                <input type="hidden" name="friend" value="<%= f.friend_username %>" /> 
-                <button type="submit">Remove</button>
-              </form>
-            <% } else { %>
-              <span><%= f.username %></span> 
-              <form method="post" action="/remove">
-                <input type="hidden" name="friend" value="<%= f.username %>" /> 
-                <button type="submit">Remove</button>
-              </form>
-            <% } %>
-          </li>
-        <% }); %>
-      <% } else { %>
-        <li>You have no friends yet.</li>
-      <% } %>
-    </ul>
-  </section>
+      <!-- Friend Board -->
+      <section>
+        <h2>Your Friends</h2>
+        <ul>
+          <% if (friends.length > 0) { %>
+            <% friends.forEach(function(f) { %>
+              <li>
+                <% // Display the friend’s username (the one that is not the current user) %>
+                <% if (f.username === user) { %>
+                  <span><%= f.friend_username %></span> 
+                  <form method="post" action="/remove">
+                    <input type="hidden" name="friend" value="<%= f.friend_username %>" /> 
+                    <button class="account-button" type="submit">Remove</button>
+                  </form>
+                <% } else { %>
+                  <span><%= f.username %></span> 
+                  <form method="post" action="/remove">
+                    <input type="hidden" name="friend" value="<%= f.username %>" /> 
+                    <button class="account-button" type="submit">Remove</button>
+                  </form>
+                <% } %>
+              </li>
+            <% }); %>
+          <% } else { %>
+            <li>You have no friends yet.</li>
+          <% } %>
+        </ul>
+      </section>
 
-  <!-- Pending Friend Requests -->
-  <section>
-    <h2>Pending Friend Requests</h2>
-    <ul>
-      <% if (pending.length > 0) { %>
-        <% pending.forEach(function(p) { %>
-            <li>
-              <span><%= p.username %></span> <!-- Show the sender's username -->
-              <form method="post" action="/accept">
-                <input type="hidden" name="friend" value="<%= p.username %>" /> 
-                <button type="submit">Accept</button>
-              </form>
-              <form method="post" action="/block">
-                <input type="hidden" name="friend" value="<%= p.username %>" /> 
-                <button type="submit">Block</button>
-              </form>
-            </li>
-          <% }); %>
-      <% } else { %>
-        <li>No pending requests.</li>
-      <% } %>
-    </ul>
-  </section>
-  <!-- Dark mode -->
-  <section>
-    <h2>Dark Mode</h2>
-    <u1>
-      <form method="post" action="/toggle-theme">
-        <input type="hidden" name="theme" value="<%= user %>" /> 
-        <button type="submit">Toggle Theme</button>
-      </form>
-    </u1>
-   </section>
+      <!-- Pending Friend Requests -->
+      <section>
+        <h2>Pending Friend Requests</h2>
+        <ul>
+          <% if (pending.length > 0) { %>
+            <% pending.forEach(function(p) { %>
+                <li>
+                  <span><%= p.username %></span> <!-- Show the sender's username -->
+                  <form method="post" action="/accept">
+                    <input type="hidden" name="friend" value="<%= p.username %>" /> 
+                    <button class="account-button" type="submit">Accept</button>
+                  </form>
+                  <form method="post" action="/block">
+                    <input type="hidden" name="friend" value="<%= p.username %>" /> 
+                    <button class="account-button" type="submit">Block</button>
+                  </form>
+                </li>
+              <% }); %>
+          <% } else { %>
+            <li>No pending requests.</li>
+          <% } %>
+        </ul>
+      </section>
+      <!-- Dark mode -->
+      <section>
+        <h2>Dark Mode</h2>
+        <u1>
+          <form method="post" action="/toggle-theme">
+            <input type="hidden" name="theme" value="<%= user %>" /> 
+            <button class="account-button" type="submit">Toggle Theme</button>
+          </form>
+        </u1>
+      </section>
 
-  <!-- Deactivation of account -->
-   <section>
-    <h2>Account Deactivation</h2>
-    <u1>
-      <form method="post" action="/deactivated">
-        <input type="hidden" name="deactivate" value="<%= user %>" /> 
-        <button type="submit">Deactivate</button>
-      </form>
-    </u1>
-   </section>
-</body>
+      <!-- Deactivation of account -->
+      <section>
+        <h2>Account Deactivation</h2>
+        <u1>
+          <form method="post" action="/deactivated">
+            <input type="hidden" name="deactivate" value="<%= user %>" /> 
+            <button class="account-button" type="submit">Deactivate</button>
+          </form>
+        </u1>
+      </section>
+    </div>
+  </body>
 </html>

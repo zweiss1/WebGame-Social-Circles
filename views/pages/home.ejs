@@ -35,9 +35,12 @@
     </div>
 
     <header>
+      
       <h1 class="header-title">SOCIAL CIRCLES</h1>
       
       <div class="header-nav">
+        <a class="button" href="/logout">Logout</a>
+
         <a class="button" href="/characters">Characters</a>
 
         <a class="button" href="/leaderboard">Leaderboards</a>
@@ -57,9 +60,9 @@
             <% leaderboardPlayers.forEach((player)=>{ %>
               <li>
                 <div class="<%=user && user===player.name ? 'leaderboard-user' : 'leaderboard-entry'%>">
-                  <span><%= player.name %></span>
+                  <span class="leaderboard-text"><%= player.name %></span>
                   
-                  <span><%= player.score %></span>
+                  <span class="leaderboard-text"><%= player.score %></span>
                 </div>
               </li>
             <% }) %>

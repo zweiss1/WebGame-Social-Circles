@@ -10,11 +10,18 @@
         href='https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-straight/css/uicons-regular-straight.css'>
         <title>Character page</title>
         <link rel="stylesheet" href="/css/style.css">
+        <% if (user && darkMode) { %>
+            <link rel="stylesheet" href="/css/styleDark.css">
+        <% } %>
         <script src="/js/carousel.js" defer></script>
     </head>
     
     <body>
-        <h1 class="header-title">Meet tha crew</h1>
+        <div class="header-page">
+            <a href="/home" class="back-icon"><i class="fi fi-rs-arrow-left"></i></a>
+            
+            <h1 class="header-title">MEET THA CREW</h1>
+          </div>
         
         
             <section class="character-list" aria-label="Character List">

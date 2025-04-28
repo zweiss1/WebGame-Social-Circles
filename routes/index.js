@@ -16,9 +16,20 @@ router.get('/register', (req, res) => {
   res.render('pages/signup');
 });
 
+router.get('/logout', (req, res) => {
+  req.session.destroy(err => {
+    if (err) {
+      console.error('Session destruction error:', err);
+      return res.status(500).send('Could not log out.');
+    }
+    res.redirect('/login');
+  });
+});
+
 
 router.get('/characters', (req, res) =>{
-  res.render('pages/characters');
+  const user = req.session.user;
+  res.render('pages/characters', {user: user});
 });
 
 router.get('/leaderboard', (req, res) =>{
@@ -36,7 +47,7 @@ router.get('/leaderboard', (req, res) =>{
       return res.status(500).send('Internal Server Error');
     }
     if (!user) {
-      res.render('pages/leaderboard', {allScores: leaderboardResults, user: user});
+      return res.render('pages/leaderboard', {allScores: leaderboardResults, user: user});
     }
     
 
@@ -51,6 +62,9 @@ router.get('/leaderboard', (req, res) =>{
       [user, user],
       (err, friendsList) => {
         if (err) return res.status(500).send(err);
+        if(friendsList.length===0){
+          return res.render('pages/leaderboard', {allScores: leaderboardResults, friendScores: [], user: user});
+        }
       const friendUsernames = friendsList.map(f => (f.username === user ? f.friend_username : f.username));
       connection.query(
         `SELECT username AS name, highscore AS score 
@@ -58,8 +72,8 @@ router.get('/leaderboard', (req, res) =>{
         WHERE username IN (?) OR username=?
         ORDER BY highscore DESC`,
         [friendUsernames, user],
-        (err, friendScores) => {
-          res.render('pages/leaderboard', {allScores: leaderboardResults, friendScores: friendScores, user: user});
+        (err, friendResults) => {
+          res.render('pages/leaderboard', {allScores: leaderboardResults, friendScores: friendResults, user: user});
         });
     });
   });
