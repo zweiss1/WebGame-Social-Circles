@@ -3,6 +3,8 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 const connection = require('../database');
 
+
+
 // Render login page for both "/" and "/login"
 router.get('/', (req, res) => {
   res.render('pages/login');
@@ -17,9 +19,10 @@ router.get('/register', (req, res) => {
 });
 
 
-router.get('/characters', (req, res) =>{
-  res.render('pages/characters');
+router.get('/characters', checkActive, (req, res) => {
+  res.render('pages/characters', { user: req.session.user ?? null });
 });
+
 
 router.get('/guest', (req, res) => {
   req.session.user = null;
@@ -165,6 +168,7 @@ router.post('/login', (req, res) => {
     }
     const user = result[0];
     req.session.user = result[0].username; // Store only the username string
+    req.session.isAdmin  = (user.is_admin === 1);
     req.session.save();
     if (user.is_active !== 1){ 
       return res.render('pages/deactivate');

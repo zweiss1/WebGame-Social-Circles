@@ -61,7 +61,10 @@ app.post('/toggle-theme', (req, res) => {
 });
 
 const indexRouter = require('./routes/index');
+const adminRouter = require('./routes/admin');
+
 app.use('/', indexRouter);
+app.use('/admin',  adminRouter);
 
 
 
