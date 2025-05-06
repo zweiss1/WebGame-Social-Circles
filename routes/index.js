@@ -34,6 +34,11 @@ router.get('/characters', checkActive, (req, res) =>{
   res.render('pages/characters', {user: user});
 });
 
+router.get('/instructions', checkActive, (req, res) =>{
+  const user = req.session.user;
+  res.render('pages/instructions', {user: user});
+});
+
 router.get('/leaderboard', checkActive, (req, res) =>{
   const user = req.session.user;
   // Querying all scores

@@ -636,8 +636,8 @@ function onCanvasClicked(event){
 async function sendScore(score){ // This can be called from the console, meaning anyone can increase their high score manually. If anti-cheating measures were in our requirements, this would be a problem.
 
     //TODO: CHANGE THIS URL ONCE IT'S DEPLOYED
-    const url = "https://drhorn.online/score";
-    //const url = "http://localhost:3000/score";
+    //const url = "https://drhorn.online/score";
+    const url = "http://localhost:3000/score";
 
     try{
         const response = await fetch(url, {
