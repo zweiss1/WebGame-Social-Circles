@@ -21,13 +21,13 @@ const socialCircles = {};
 
 canvas.addEventListener("mousedown", onCanvasClicked); // onCanvasClicked will process the click event and call different functions based on where you clicked. It's like a router for clicks!
 
-
+canvas.addEventListener("mousemove", onCanvasHover);
 
 // CANVAS OBJECTS
 
 // This object stores the 3 possible actions
 const ACTIONS = Object.freeze({
-    INVITE: "INVITE", 
+    INVITE: "PARTY", 
     RIZZUP: "RIZZUP",
     COALMINE: "COALMINE"
 });
@@ -300,6 +300,37 @@ function initializeUI(){
 }
 
 
+// Tooltips
+function drawTooltip(character) {
+    const text = `${character.name}\nLikes: ${character.like}\nDislikes: ${character.dislike}`;
+    const lines = text.split('\n');
+    const padding = 10;
+    const lineHeight = 20;
+    const width = 160;
+    const height = padding * 2 + lines.length * lineHeight;
+
+    // Position tooltip above character
+    let x = character.ui.x + character.ui.width / 2 - width / 2;
+    let y = character.ui.y - height - 5;
+
+    // Prevent off-canvas
+    if (x + width > canvas.width) x = canvas.width - width - 5;
+    if (x < 0) x = 5;
+    if (y < 0) y = character.ui.y + character.ui.height + 5;
+
+    // Draw background
+    context.fillStyle = "rgba(0, 0, 0, 0.8)";
+    context.fillRect(x, y, width, height);
+
+    // Draw text
+    context.fillStyle = "white";
+    context.font = "14px Roboto Slab";
+    lines.forEach((line, i) => {
+        context.fillText(line, x + padding, y + padding + (i + 1) * lineHeight - 6);
+    });
+}
+
+
 // Clear the canvas and render all game UI
 function renderUI(){
     clearCanvas();
@@ -326,6 +357,11 @@ function renderUI(){
     }
 
     if (startedGame) renderPoints();
+
+    // Tooltip if hovering a character
+    if (hoverTarget != null) {
+        drawTooltip(hoverTarget);
+    }
 }
 
 // Renders points as text. Called in renderUI.
@@ -626,18 +662,52 @@ function onCanvasClicked(event){
 }
 
 
+const SCORE_SECRET = window._scoreSecret || "";
 
+function simpleHash(str) {
+    let hash = 0, i, chr;
+    if (str.length === 0) return hash;
+    for (i = 0; i < str.length; i++) {
+        chr   = str.charCodeAt(i);
+        hash  = ((hash << 5) - hash) + chr;
+        hash |= 0;
+    }
+    return hash;
+}
 
+let hoverTarget = null; // which UIObject (character) we're hovering
 
+function onCanvasHover(event) {
+    if (!startedGame || endedGame || !canClick) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = event.clientX - rect.left;
+    const mouseY = event.clientY - rect.top;
+
+    hoverTarget = null;
+
+    // Check each character in each circle
+    Object.values(socialCircles).forEach(circle => {
+        Object.values(circle.characters).forEach(char => {
+            if (char.ui.containsPos(mouseX, mouseY)) {
+                hoverTarget = char;
+            }
+        });
+    });
+
+    renderUI(); // re-render to show/hide tooltip
+}
 
 
 
 // UPDATING HIGHSCORE WITH SERVER
 async function sendScore(score){ // This can be called from the console, meaning anyone can increase their high score manually. If anti-cheating measures were in our requirements, this would be a problem.
 
-    //TODO: CHANGE THIS URL ONCE IT'S DEPLOYED
-    const url = "https://drhorn.online/score";
-    //const url = "http://localhost:3000/score";
+    // Use local server for development
+    //const url = "https://drhorn.online/score";
+    const url = "http://localhost:3000/score";
+
+    const signature = simpleHash(score + ":" + SCORE_SECRET);
 
     try{
         const response = await fetch(url, {
@@ -645,7 +715,7 @@ async function sendScore(score){ // This can be called from the console, meaning
             headers:{
                 "Content-Type":"application/json"
             },
-            body: JSON.stringify({score: score})
+            body: JSON.stringify({score: score, signature: signature})
         });
 
         // Check if there was an issue getting the request
@@ -666,6 +736,10 @@ async function sendScore(score){ // This can be called from the console, meaning
             context.strokeText("New high score!", 200, 300);
 
             context.fillStyle = prevStyle;
+
+            setTimeout(() => {
+                window.location.reload();
+            }, 2000); // was 1200, now 2000ms
         }
 
     } catch(error){

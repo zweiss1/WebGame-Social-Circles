@@ -30,6 +30,8 @@
             <input type="password" name="password" class="auth-text" placeholder="Enter your password" />
           </div>
 
+          <div id="auth-error" style="color:red; margin-bottom:1rem;"></div>
+
           <div id="auth-actions">
             <div id="auth-switch">
               <a href="/register">Switch to Signup</a>
@@ -45,5 +47,33 @@
         </form>
       </div>
     </div>
+    <script>
+    // AJAX login
+    document.getElementById('auth-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const form = e.target;
+      const data = {
+        username: form.username.value,
+        password: form.password.value
+      };
+      const errorDiv = document.getElementById('auth-error');
+      errorDiv.textContent = '';
+      try {
+        const res = await fetch('/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        if (res.ok) {
+          window.location.href = '/home';
+        } else {
+          const text = await res.text();
+          errorDiv.textContent = text || 'Login failed';
+        }
+      } catch (err) {
+        errorDiv.textContent = 'Network error';
+      }
+    });
+    </script>
   </body>
 </html>

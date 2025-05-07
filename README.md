@@ -70,7 +70,7 @@ DATABASE_NAME=social_circles_database
 SESSION_SECRET=[Your Session Secret]  
 ```
 
-## In public\js\home.js go to line 639
+## In public\js\home.js go to line 693
 
 * Comment out `“const url = "https://drhorn.online/score";`
 * Remove comments on `//const url = "http://localhost:3000/score";`

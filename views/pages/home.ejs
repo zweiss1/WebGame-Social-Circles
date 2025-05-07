@@ -36,12 +36,18 @@
         <% } %>
     </div>
 
+    <script>
+      window._scoreSecret = "<%- scoreSecret || '' %>";
+    </script>
+
     <header>
       
       <h1 class="header-title">SOCIAL CIRCLES</h1>
       
       <div class="header-nav">
         <a class="button" href="/logout">Logout</a>
+
+        <a class="button" href="/instructions">Instructions</a>
 
         <a class="button" href="/characters">Characters</a>
 
@@ -84,10 +90,8 @@
       
      
       
-      
-      
-      
     </main>
+
 
     <footer id="homeFooter">
       <p>Horn Studios:</p>
