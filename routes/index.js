@@ -3,7 +3,13 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 const connection = require('../database');
 
-
+// Helper to get field from either JSON or urlencoded
+function getField(req, key) {
+  if (req.body && typeof req.body === 'object' && Object.prototype.hasOwnProperty.call(req.body, key)) {
+    return req.body[key];
+  }
+  return undefined;
+}
 
 // Render login page for both "/" and "/login"
 router.get('/', (req, res) => {
@@ -212,11 +218,12 @@ router.post("/remove", function(req, res) {
 
 
 router.post('/login', (req, res) => {
-  const { username, password } = req.body;
-  // Checks if user has an account
+  // Accept both JSON and urlencoded
+  const username = getField(req, 'username');
+  const password = getField(req, 'password');
   let sql = 'SELECT * FROM user_information WHERE username=?';
   connection.query(sql, [username], async (err, result) => {
-    if (err) throw err;
+    if (err) return res.status(500).send('Server error');
     if (result.length === 0) {
       return res.status(401).send('Invalid username');
     }
@@ -225,38 +232,84 @@ router.post('/login', (req, res) => {
       return res.status(401).send('Invalid password');
     }
     const user = result[0];
-    req.session.user = result[0].username; // Store only the username string
-    req.session.isAdmin  = (user.is_admin === 1);
-    req.session.save();
-    if (user.is_active !== 1){ 
-      return res.render('pages/deactivate');
-    }
-    res.redirect('/home');
+    req.session.user = result[0].username;
+    req.session.isAdmin  = (user.isAdmin === 1);
+    req.session.save(() => {
+      if (user.is_active !== 1){ 
+        if (req.headers['content-type'] && req.headers['content-type'].includes('application/json')) {
+          return res.status(403).send('Account is deactivated');
+        }
+        return res.render('pages/deactivate');
+      }
+      if (req.headers['content-type'] && req.headers['content-type'].includes('application/json')) {
+        return res.sendStatus(200);
+      }
+      res.redirect('/home');
+    });
   });
 });
 
 router.post('/signup', async (req, res) => {
-  const { username, password } = req.body;
-  const hash = await bcrypt.hash(password, 13);
-  // Checks if username is taken
-  let checkUser = 'SELECT * FROM user_information WHERE username=?';
-  connection.query(checkUser, [username], (err, result) => {
-    if (err) throw err;
-    if (result.length != 0) {
-      return res.status(401).send('Username is already taken');
-    }
-    // Adds user to database
-    let sql = 'INSERT INTO user_information(username, hash_password) VALUES(?,?)';
-    connection.query(sql, [username, hash], (err, result) => {
-      if (err) throw err;
-      connection.query(checkUser, [username], (err, result) => {
-        if (err) throw err;
-        req.session.user = result[0].username; // Store only the username string
-        req.session.save();
-        res.redirect('/home');
+  const username = getField(req, 'username');
+  const password = getField(req, 'password');
+  // Basic validation for username length and allowed chars
+  if (!username || !password) {
+    return res.status(400).send('Username and password required');
+  }
+  if (typeof username !== 'string' || username.length > 255) {
+    return res.status(400).send('Username too long');
+  }
+  // Optionally: check for allowed characters (alphanumeric)
+  if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+    return res.status(400).send('Username must be alphanumeric or underscore');
+  }
+  try {
+    const hash = await bcrypt.hash(password, 13);
+    let checkUser = 'SELECT * FROM user_information WHERE username=?';
+    connection.query(checkUser, [username], (err, result) => {
+      if (err) {
+        console.error('DB error (checkUser):', err);
+        return res.status(500).send('Server error');
+      }
+      if (result && result.length !== 0) {
+        return res.status(401).send('Username is already taken');
+      }
+      let sql = 'INSERT INTO user_information(username, hash_password, highscore, is_active, isAdmin, darkMode) VALUES(?,?,?,?,?,?)';
+      connection.query(sql, [username, hash, 0, 1, 0, 0], (err, insertResult) => {
+        if (err) {
+          console.error('DB error (insert):', err);
+          // Duplicate username error (shouldn't happen due to check, but just in case)
+          if (err.code === 'ER_DUP_ENTRY') {
+            return res.status(409).send('Username already exists');
+          }
+          return res.status(500).send('Server error');
+        }
+        connection.query(checkUser, [username], (err, result) => {
+          if (err || !result || !result[0]) {
+            console.error('DB error (post-insert fetch):', err);
+            return res.status(500).send('Server error');
+          }
+          if (!req.session) {
+            return res.status(500).send('Session error');
+          }
+          req.session.user = result[0].username;
+          req.session.save((err) => {
+            if (err) {
+              console.error('Session save error:', err);
+              return res.status(500).send('Session save error');
+            }
+            if (req.headers['content-type'] && req.headers['content-type'].includes('application/json')) {
+              return res.sendStatus(200);
+            }
+            res.redirect('/home');
+          });
+        });
       });
     });
-  });
+  } catch (e) {
+    console.error('Signup catch error:', e);
+    return res.status(500).send('Server error');
+  }
 });
 
 router.get('/home', checkActive, (req, res) => {
@@ -388,52 +441,38 @@ router.post('/add_friend', checkActive, (req, res) => {
   if (!req.session.user) {
     return res.status(401).send("Unauthorized");
   }
-
   const sender = req.session.user; 
-  const receiver = (req.body.username || "").trim();
+  const receiver = (getField(req, 'username') || "").trim();
 
   if (!receiver) {
     return res.status(400).send("Please enter a username.");
   }
-
   if (sender === receiver) {
     return res.status(400).send("You cannot add yourself.");
   }
-
-  // Check if receiver exists
   connection.query(
     "SELECT * FROM user_information WHERE username = ?",
     [receiver],
     (err, userResult) => {
-      if (err) {
-        console.error("Error checking user:", err);
-        return res.status(500).send("Database error");
-      }
+      if (err) return res.status(500).send("Database error");
       if (userResult.length === 0) {
         return res.status(404).send("User not found.");
       }
-
-      // Check for existing friendship in either direction
       connection.query(
         "SELECT * FROM friendships WHERE (username = ? AND friend_username = ?) OR (username = ? AND friend_username = ?)",
         [sender, receiver, receiver, sender],
         (err, friendshipResult) => {
-          if (err) {
-            console.error("Error checking friendship:", err);
-            return res.status(500).send("Database error");
-          }
+          if (err) return res.status(500).send("Database error");
           if (friendshipResult.length !== 0) {
             return res.status(409).send("Request already exists.");
           }
-
-          // Insert with sender as username and receiver as friend_username
           connection.query(
             "INSERT INTO friendships (username, friend_username, status) VALUES (?, ?, ?)",
             [sender, receiver, "pending"],
             (err, insertResult) => {
-              if (err) {
-                console.error("Error inserting friendship:", err);
-                return res.status(500).send("Database error");
+              if (err) return res.status(500).send("Database error");
+              if (req.headers['content-type'] && req.headers['content-type'].includes('application/json')) {
+                return res.sendStatus(200);
               }
               res.redirect("/account");
             }
