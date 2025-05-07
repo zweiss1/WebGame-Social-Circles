@@ -28,7 +28,7 @@
     <div class="account-body">
       <!-- Add Friend Form -->
       <div id="auth-container">
-        <form method="post" action="/add_friend">
+        <form method="post" id="add-friend-form" action="/add_friend">
           <label for="username" class="auth-subtitle">Add Friends</label>
 
           <div class="auth-field">
@@ -38,6 +38,8 @@
             
             <input type="text" name="username" class="auth-text" placeholder="Enter the username" />
           </div>
+          <div id="add-friend-error" style="color:red; margin-bottom:1rem;"></div>
+          <input type="submit" class="account-button" value="Add Friend" />
         </form>
       </div>
 
@@ -115,5 +117,30 @@
         </u1>
       </section>
     </div>
+    <script>
+    // AJAX add friend
+    document.getElementById('add-friend-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const form = e.target;
+      const data = { username: form.username.value };
+      const errorDiv = document.getElementById('add-friend-error');
+      errorDiv.textContent = '';
+      try {
+        const res = await fetch('/add_friend', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        if (res.ok) {
+          window.location.reload();
+        } else {
+          const text = await res.text();
+          errorDiv.textContent = text || 'Add friend failed';
+        }
+      } catch (err) {
+        errorDiv.textContent = 'Network error';
+      }
+    });
+    </script>
   </body>
 </html>
