@@ -303,6 +303,7 @@ router.get('/home', checkActive, (req, res) => {
     "./images/GameUI/gray.webp", // gray filter for when buttons can't be clicked
     "./images/GameUI/orange.png" // Orange filter, used the same way as gray
   ];
+  
 
 
 
