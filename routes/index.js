@@ -43,6 +43,11 @@ router.get('/characters', checkActive, (req, res) =>{
   res.render('pages/characters', {user: user});
 });
 
+router.get('/instructions', checkActive, (req, res) =>{
+  const user = req.session.user;
+  res.render('pages/instructions', {user: user});
+});
+
 router.get('/leaderboard', checkActive, (req, res) =>{
   const user = req.session.user;
   // Querying all scores
@@ -358,6 +363,7 @@ router.get('/home', checkActive, (req, res) => {
     "./images/GameUI/gray.webp", // gray filter for when buttons can't be clicked
     "./images/GameUI/orange.png" // Orange filter, used the same way as gray
   ];
+  
 
 
 
