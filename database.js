@@ -1,7 +1,7 @@
-require('dotenv').config(); //loads enviroment variables from the .env file
-const mysql = require('mysql2');  //loads enviroment variables from the .env file
+require('dotenv').config();
+const mysql = require('mysql2');
 
-const pool = mysql.createPool({ //handles mySQL connections
+const pool = mysql.createPool({
   host: process.env.DATABASE_HOST,
   user: process.env.DATABASE_USER,
   password: process.env.DATABASE_PASSWORD,
@@ -11,4 +11,5 @@ const pool = mysql.createPool({ //handles mySQL connections
   queueLimit: 0
 });
 
-module.exports = pool; //makes pool avaible to rest of project
+module.exports = pool;
+module.exports.promise = pool.promise();

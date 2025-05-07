@@ -13,14 +13,17 @@ function getField(req, key) {
 
 // Render login page for both "/" and "/login"
 router.get('/', (req, res) => {
+  if (req.session.user) return res.redirect('/home');
   res.render('pages/login');
 });
 
 router.get('/login', (req, res) => {
+  if (req.session.user) return res.redirect('/home');
   res.render('pages/login');
 });
 
 router.get('/register', (req, res) => {
+  if (req.session.user) return res.redirect('/home');
   res.render('pages/signup');
 });
 
@@ -315,12 +318,16 @@ router.post('/signup', async (req, res) => {
 router.get('/home', checkActive, (req, res) => {
   const user = req.session.user; 
 
-  // Get leaderboard data regardless of user login status
+  if (req.session && !req.session.scoreSecret) {
+    req.session.scoreSecret = Math.random().toString(36).slice(2, 18);
+  }
+  const scoreSecret = req.session ? req.session.scoreSecret : "";
+
   const leaderboardSql = `
     SELECT username AS name, highscore AS score
     FROM user_information
     WHERE is_active = 1
-    ORDER BY highscore DESC
+    ORDER BY highscore DESC, username ASC
     LIMIT 10
   `;
 
@@ -370,7 +377,8 @@ router.get('/home', checkActive, (req, res) => {
 
         // Render UI images
         characterImages: characterImages,
-        uiImages: uiImages
+        uiImages: uiImages,
+        scoreSecret: scoreSecret // inject for guests (will be empty string)
       });
     }
     
@@ -425,10 +433,9 @@ router.get('/home', checkActive, (req, res) => {
           yourScore: yourScore || 'Not available',
           user: user,
           friendLeaderboard: friendLeaderboardResults,
-
-          // Send game images
           characterImages: characterImages,
-          uiImages: uiImages
+          uiImages: uiImages,
+          scoreSecret: scoreSecret 
         });
       });
     });
@@ -436,6 +443,48 @@ router.get('/home', checkActive, (req, res) => {
 });
 
 
+function simpleHash(str) {
+  let hash = 0, i, chr;
+  if (!str) return hash;
+  for (i = 0; i < str.length; i++) {
+    chr   = str.charCodeAt(i);
+    hash  = ((hash << 5) - hash) + chr;
+    hash |= 0;
+  }
+  return hash;
+}
+router.post('/score', (req, res) => {
+  if (!req.session.user) {
+    return res.json({}); 
+  }
+  const score = Number(req.body.score);
+  const signature = req.body.signature;
+  const secret = req.session.scoreSecret || "";
+  const expected = simpleHash(score + ":" + secret);
+  if (String(signature) !== String(expected)) {
+    return res.status(403).json({ error: "Invalid signature" });
+  }
+
+  connection.query(
+    "UPDATE user_information SET highscore = ? WHERE username = ? AND highscore < ?",
+    [score, req.session.user, score],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({ error: "Database error" });
+      }
+      console.log(`[SCORE] User: ${req.session.user}, Score: ${score}, Rows updated: ${result.affectedRows}`);
+      if (result.affectedRows > 0 && req.session) {
+        req.session.scoreSecret = Math.random().toString(36).slice(2, 18);
+      }
+      const responseJSON = {};
+      if (result.affectedRows > 0) {
+        responseJSON["newHighScore"] = score;
+      }
+      res.json(responseJSON);
+    }
+  );
+});
 
 router.post('/add_friend', checkActive, (req, res) => {
   if (!req.session.user) {
@@ -532,35 +581,5 @@ function checkActive(req, res, next) {
       }
   });
 }
-
-//Recieves scores from clients every time they finish a game. If the new score is higher than their high score, their high score is updated.
-router.post('/score', (req, res) => {
-  if (!req.session.user) {
-    //return res.status(401).send("Unauthorized");
-    return res.json({}); // Send back nothing because they aren't signed in. Ideally, if a user wasn't signed in, the client wouldn't be sending scores at all. Maintenance team, you can fix this if you want.
-  }
-  // Update the user's high score if the new score is higher
-  connection.query(`UPDATE user_information SET highscore = ${req.body.score} WHERE username = "${req.session.user}" AND highscore < ${req.body.score}`, (err, result) => {
-    
-    if (err){
-      console.log(err);
-    }
-
-    else{
-      // Send the client a json that stores the new high score if it was updated and is empty if otherwise
-      responseJSON = {}
-
-      if (result.affectedRows > 0){
-        responseJSON["newHighScore"] = req.body.score;
-      }
-
-      res.json(responseJSON); // I'm sending back the new high score, but currently the client doesn't update its leaderboard when it recieves a new high score. This is because the organization of the leaderboard is done when rendering home.ejs, and it would be annoying to reload the page or write a bunch of code to manually reorder the leaderboard. Maintenance team, you guys can implement this if you want.
-    }
-  });
-});
-
-
-
-
 
 module.exports = router;

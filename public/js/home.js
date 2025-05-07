@@ -625,19 +625,27 @@ function onCanvasClicked(event){
 
 }
 
+const SCORE_SECRET = window._scoreSecret || "";
 
-
-
-
-
-
+function simpleHash(str) {
+    let hash = 0, i, chr;
+    if (str.length === 0) return hash;
+    for (i = 0; i < str.length; i++) {
+        chr   = str.charCodeAt(i);
+        hash  = ((hash << 5) - hash) + chr;
+        hash |= 0;
+    }
+    return hash;
+}
 
 // UPDATING HIGHSCORE WITH SERVER
 async function sendScore(score){ // This can be called from the console, meaning anyone can increase their high score manually. If anti-cheating measures were in our requirements, this would be a problem.
 
-    //TODO: CHANGE THIS URL ONCE IT'S DEPLOYED
-    const url = "https://drhorn.online/score";
-    //const url = "http://localhost:3000/score";
+    // Use local server for development
+    //const url = "https://drhorn.online/score";
+    const url = "http://localhost:3000/score";
+
+    const signature = simpleHash(score + ":" + SCORE_SECRET);
 
     try{
         const response = await fetch(url, {
@@ -645,7 +653,7 @@ async function sendScore(score){ // This can be called from the console, meaning
             headers:{
                 "Content-Type":"application/json"
             },
-            body: JSON.stringify({score: score})
+            body: JSON.stringify({score: score, signature: signature})
         });
 
         // Check if there was an issue getting the request
@@ -666,6 +674,10 @@ async function sendScore(score){ // This can be called from the console, meaning
             context.strokeText("New high score!", 200, 300);
 
             context.fillStyle = prevStyle;
+
+            setTimeout(() => {
+                window.location.reload();
+            }, 2000); // was 1200, now 2000ms
         }
 
     } catch(error){
